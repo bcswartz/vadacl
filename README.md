@@ -1,6 +1,5 @@
 # vadacl
-vadacl ("validation at domain and component levels") is a small library for Angular 2 that enhances the reactive form 
-validation features provided in Angular 2.  It provides a means by which developers can set domain/database-based 
+vadacl ("validation at domain and component levels") is a small TypeScript library for Angular 2 that enhances the reactive form validation features provided in Angular 2.  It provides a means by which developers can set domain/database-based 
 validation rules on data objects but then augment or override those validations as needed within different components.
 It also lets developers add and override validation error messages that are added to the validation metadata returned 
 by the validation methods.
