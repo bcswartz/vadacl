@@ -1,0 +1,14 @@
+div.alert-danger {
+    margin-top:4px;
+    padding: 8px;
+}
+
+ul {
+    list-style-type: none;
+    margin-left: 0px;
+    padding-left: 0px;
+}
+
+.form-group {
+    padding-bottom:7px;
+}

@@ -1,0 +1,92 @@
+<h3>Address Form</h3>
+
+<div class="row">
+    <div class="col-md-6">
+        <form class="form-horizontal well well-sm" [formGroup]="addressForm">
+
+            <div class="form-group">
+                <label for="street" class="col-md-2 control-label">Street:</label>
+                <div class="col-md-6">
+                    <input id="street" type="text" class="form-control" formControlName="street">
+                    <!-- Because the AddressComponent leverages vadacl as an injected service, the vadacl methods must
+                    be called via the service reference in the component. -->
+                    <div *ngIf="pageReady && vService.showErrors( addressForm.controls.street) " class="alert alert-danger">
+                        <ul>
+                            <li *ngFor="let error of vService.getControlErrors( addressForm.controls.street )">
+                                {{error}}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    Value is required.
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="city" class="col-md-2 control-label">City:</label>
+                <div class="col-md-6">
+                    <input id="city" type="text" class="form-control" formControlName="city">
+                    <div *ngIf="pageReady && vService.showErrors( addressForm.controls.city )" class="alert alert-danger">
+                        <ul>
+                            <li *ngFor="let error of vService.getControlErrors( addressForm.controls.city )">
+                                {{error}}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    Value is required.
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="state" class="col-md-2 control-label">State:</label>
+                <div class="col-md-6">
+                    <input id="state" type="text" class="form-control" formControlName="state">
+                    <div *ngIf="pageReady && vService.showErrors( addressForm.controls.state )" class="alert alert-danger">
+                        <ul>
+                            <li *ngFor="let error of vService.getControlErrors( addressForm.controls.state )">
+                                {{error}}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    2-letter state abbreviation required.
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="zipCode" class="col-md-2 control-label">Zip Code:</label>
+                <div class="col-md-6">
+                    <input id="zipCode" type="text" class="form-control" formControlName="zipCode">
+                    <div *ngIf="pageReady && vService.showErrors( addressForm.controls.zipCode )" class="alert alert-danger">
+                        <ul>
+                            <li *ngFor="let error of vService.getControlErrors( addressForm.controls.zipCode )">
+                                {{error}}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    5-digit zip code required.
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6 col-md-offset-2">
+                    <button type="button" class="btn btn-primary" [disabled]="!addressForm.valid" (click)="submitForm()">Submit</button>
+                    <button type="button" class="btn btn-default" (click)="resetForm()">Reset</button>
+                </div>
+                <div class="col-md-2 col-md-offset-1">
+                    <span class="label label-success" *ngIf="formSubmitted">Data submitted!</span>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-8">
+        <a class="btn btn-primary" [routerLink]="['/home']">Return to Main Page</a>
+    </div>
+</div>

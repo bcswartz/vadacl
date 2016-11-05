@@ -1,0 +1,47 @@
+<h3>Company Form</h3>
+
+<div class="row">
+    <div class="col-md-8">
+        <form class="form-horizontal well well-sm" [formGroup]="companyForm">
+
+            <div class="form-group">
+                <label for="companyName" class="col-md-2 control-label">Company Name:</label>
+                <div class="col-md-4">
+                    <input id="companyName" type="text" class="form-control" formControlName="companyName">
+                    <div *ngIf="pageReady && showErrors( companyForm.controls.companyName )" class="alert alert-danger">
+                        <ul>
+                            <li *ngFor="let error of getControlErrors( companyForm.controls.companyName )">
+                                {{error}}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-5">
+                    Value is required.  Must be at least 5 characters long and cannot contain numbers or spaces.
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2">
+                    <button type="button" class="btn btn-danger" (click)="setCompanyName( 'ABC' )">Change to 'ABC'</button>
+                    <button type="button" class="btn btn-danger" (click)="setCompanyName( '9To6' )">Change to '9To6'</button>
+                    <button type="button" class="btn btn-success" (click)="setCompanyName( 'ValidName' )">Change to 'ValidName'</button>
+                </div>
+            </div>
+            <div class="row">&nbsp;</div>
+            <div class="row">
+                <div class="col-md-2 col-md-offset-2">
+                    <button type="button" class="btn btn-primary" [disabled]="!companyForm.valid" (click)="submitForm()">Submit</button>
+                    <button type="button" class="btn btn-default" (click)="resetForm()">Reset</button>
+                </div>
+                <div class="col-md-2 col-md-offset-1">
+                    <span class="label label-success" *ngIf="formSubmitted">Data submitted!</span>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-8">
+        <a class="btn btn-primary" [routerLink]="['/home']">Return to Main Page</a>
+    </div>
+</div>
