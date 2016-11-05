@@ -250,7 +250,7 @@ in whatever Messages module is imported into the ValidationMethods class.
 The Vadacl class also includes methods that assist with the task of displaying the validation error messages in the 
 component template, eliminating the need to conditionally display different DOM elements for different validation errors:
 
-```html
+```
 <input id="firstName" type="text" class="form-control" formControlName="firstName">
 <div *ngIf="pageReady && showErrors( profileForm.controls.firstName )" class="alert alert-danger">
     <ul>
@@ -261,7 +261,7 @@ component template, eliminating the need to conditionally display different DOM 
 </div>
 ```
 
-[Admin form screenshot](docs/adminProfileErrors.png)
+[Click to view admin profile form screenshot](docs/adminProfileErrors.png)
 
 ### Other Features
 
@@ -278,7 +278,7 @@ Patterns module incorporated in the vadacl architecture.
 
 ## How to Install
 
-To use vadacl, simply download or checkout this repo, then copy the vadacl folder into your own project.
+To use vadacl, simply download or checkout this repo, then copy the app/vadacl folder into your own project.
 
 This repo contains an Angular 2 application (currently Angular 2.1.1) with several demos that utilize vadacl.  So to try
 out vadacl, download or checkout the repo, open a command prompt in the main project folder, and run the application
