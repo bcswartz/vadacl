@@ -1,8 +1,8 @@
 # vadacl
-vadacl ("validation at domain and component levels") is a code framework for Angular 2 that enhances the reactive form 
+vadacl ("validation at domain and component levels") is a small library for Angular 2 that enhances the reactive form 
 validation features provided in Angular 2.  It provides a means by which developers can set domain/database-based 
-validation rules on data objects but then augment or override those validations as needed within different components.  
-It also lets developers add and override validation error messages that become part of the validation metadata returned 
+validation rules on data objects but then augment or override those validations as needed within different components.
+It also lets developers add and override validation error messages that are added to the validation metadata returned 
 by the validation methods.
 
 ## Explanation By Example
@@ -24,7 +24,7 @@ Your application needs to apply the following (somewhat arbitrary) business rule
 * Customer and admins have separate components/forms for editing their user profile data.
 * Validation errors should be display beneath the form inputs, and should be context-appropriate.
 
-This is how you could implement validation with vadacl that addresses all of these validation and business rules...
+This is how you could implement validation with vadacl that addresses all of these validation and business rules:
 
 Create a domain class with properties that will hold the data from the UserProfile database record retrieved by your application:
 
@@ -77,7 +77,7 @@ export class UserProfile implements Validatable {
 
 In vadacl parlance, these validations are the "domain validations" referred to in the vadacl acronym.  They can also be
 thought of as "persistence" validations:  if you send back UserProfile property values that don't adhere to these validation
-rules back to your database to be saved/persisted, the save attempt will fail.  These validation constraints should be
+rules back to your database to be saved/persisted, the save attempt will fail.  Such validation constraints should be
 applied consistently throughout your application.
 
 One quick note before moving on:  applying the interfaces is strictly optional, but doing so will help your IDE and 
@@ -123,9 +123,10 @@ export class CustomerProfileComponent implements OnInit {
 }  
 ```
 
-Now refactor the class to extend the Vadacl class, giving the class access to the methods in the vadacl.ts file.  Code 
+Now refactor the class to extend the Vadacl class, giving the class access to the methods in the vadacl.ts file.  Add 
 the validation settings needed to implement the user profile business logic that applies to customer users, and then
-configure the validation behavior for the form fields using that customer-specific business logic as needed:
+configure the validation behavior for the form fields using that customer-specific business logic as needed via vadacl's
+applyRules() method:
 
 ```javascript
 import { Component, OnInit } from '@angular/core';
@@ -265,9 +266,9 @@ component template, eliminating the need to conditionally display different DOM 
 
 ### Other Features
 
-* In addition to the validation methods currently provided in Angular 2 (required, minLength, maxLength, pattern ), 
-vadacl also includes a withinLength validation for validating that a string length falls within a certain range. 
-Creating additional validation methods is just a matter of following the examples of the current methods.
+* In addition to wrapping and reusing the validation methods currently provided in Angular 2 (required, minLength, 
+maxLength, pattern), vadacl also includes a withinLength validation for validating that a string length falls within a 
+certain range. Creating additional validation methods is just a matter of following the examples of the current methods.
 
 * If you don't want to write your components to extend the Vadacl class, you can declare the Vadacl class as a provider
 in the appropriate Angular module(s) and inject it into your components like any other service.
@@ -281,14 +282,20 @@ Patterns module incorporated in the vadacl architecture.
 To use vadacl, simply download or checkout this repo, then copy the app/vadacl folder into your own project.
 
 This repo contains an Angular 2 application (currently Angular 2.1.1) with several demos that utilize vadacl.  So to try
-out vadacl, download or checkout the repo, open a command prompt in the main project folder, and run the application
-using "npm start."
+out vadacl, download or checkout the repo, open a command prompt in the main project folder, run "npm install" to get 
+the needed Node modules to run Angular, and run the application using "npm start."
+
+Note that the demos display the validation errors based on the default configuration, meaning that the errors are not
+displayed until the invalid field is marked as both dirty and touched (had and then lost focus).
 
 
 ## Feature Roadmap
 
 Currently the roadmap for improving vadacl includes the following items:
 
-* Unit tests
-* Additional validation methods
-* The ability to set domain-level validation error messages in the Messages module to accommodate simple internationalization.
+* The addition of unit tests.
+
+* The addition of more validation methods.
+
+* Adding the ability to set domain-level validation error messages in the Messages module to accommodate simple 
+internationalization.

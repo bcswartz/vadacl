@@ -6,7 +6,7 @@
 
             <div class="form-group">
                 <label for="companyName" class="col-md-2 control-label">Company Name:</label>
-                <div class="col-md-4">
+                <div class="col-md-5">
                     <input id="companyName" type="text" class="form-control" formControlName="companyName">
                     <div *ngIf="pageReady && showErrors( companyForm.controls.companyName )" class="alert alert-danger">
                         <ul>
@@ -16,7 +16,7 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-md-5">
+                <div class="col-md-4">
                     Value is required.  Must be at least 5 characters long and cannot contain numbers or spaces.
                 </div>
             </div>
@@ -29,7 +29,7 @@
             </div>
             <div class="row">&nbsp;</div>
             <div class="row">
-                <div class="col-md-2 col-md-offset-2">
+                <div class="col-md-6 col-md-offset-2">
                     <button type="button" class="btn btn-primary" [disabled]="!companyForm.valid" (click)="submitForm()">Submit</button>
                     <button type="button" class="btn btn-default" (click)="resetForm()">Reset</button>
                 </div>
