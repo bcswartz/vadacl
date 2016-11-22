@@ -276,9 +276,13 @@ in the appropriate Angular module(s) and inject it into your components like any
 Patterns module incorporated in the vadacl architecture.
 
 
-## How to Install
+## Usage, Execution, and Testing Instructions
+
+**Using vadacl in your project**
 
 To use vadacl, simply download or checkout this repo, then copy the app/vadacl folder into your own project.
+
+**Trying out vadacl**
 
 This repo contains an Angular 2 application (currently Angular 2.1.1) with several demos that utilize vadacl.  So to try
 out vadacl, download or checkout the repo, open a command prompt in the main project folder, run "npm install" to get 
@@ -287,12 +291,26 @@ the needed Node modules to run Angular, and run the application using "npm start
 Note that the demos display the validation errors based on the default configuration, meaning that the errors are not
 displayed until the invalid field is marked as both dirty and touched (had and then lost focus).
 
+**Testing vadacl**
+
+The vadacl folder contains Jasmine unit tests for the Vadacl and ValidationMethod classes.  The repo includes packages 
+and configuration files for running the tests via Karma. To execute the tests, open a command prompt in 
+the main project folder, run "npm install" to get the needed Node modules, and then run "npm test".
+
+## Release Notes
+
+### 0.0.2
+
+* Added unit tests for Vadacl and ValidationMethod classes.
+
+### 0.0.1
+
+* Initial release
+
 
 ## Feature Roadmap
 
 Currently the roadmap for improving vadacl includes the following items:
-
-* The addition of unit tests.
 
 * The addition of more validation methods.
 

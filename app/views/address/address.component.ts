@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { FormGroup, FormControl } from '@angular/forms';
-import { Vadacl as VadaclService } from '../../vadacl/vadacl'
+import { Vadacl as VadaclService } from '../../vadacl/vadacl';
 
 @Component({
     moduleId: module.id,

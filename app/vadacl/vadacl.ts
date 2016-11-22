@@ -46,8 +46,10 @@ export class Vadacl {
         let methodDeclaration = methodAsString.match( methodDeclarationRegExp );
         let argumentArray = methodDeclaration[ 1 ].split( argumentSplit );
 
-        for( let argIndex in argumentArray) {
-            methodArguments[ argumentArray[ argIndex ].replace(/\s/g,'') ] = argumentPosition++;
+        if( argumentArray[ 0 ] != '' ) {
+            for( let argIndex in argumentArray) {
+                methodArguments[ argumentArray[ argIndex ].replace(/\s/g,'') ] = argumentPosition++;
+            }
         }
 
         return methodArguments;
@@ -112,7 +114,7 @@ export class Vadacl {
     */
     changeControlValue( control: AbstractControl, value: any, markTouched: boolean = true ) : void {
         control.markAsDirty();
-        control.markAsTouched( markTouched );
+        if( markTouched) { control.markAsTouched() };
         control.setValue( value );
     }
 
