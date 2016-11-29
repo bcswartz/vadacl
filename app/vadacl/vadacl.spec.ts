@@ -287,7 +287,7 @@ describe( 'Vadacl', () => {
 
         beforeEach( () => {
             formControl = new FormControl();
-            formControl.setErrors( { "required": { message: "A value is required." }, "minLength": { message: 'minLength error.' } } );
+            formControl.setErrors( { "required": { message: "A value is required." }, "minlength": { message: 'minLength error.' } } );
         });
 
         it( 'should return an empty array if no errors, regardless of dirty status or onlyWhenDirty argument', () => {
@@ -317,7 +317,6 @@ describe( 'Vadacl', () => {
             expect( errorArray.length ).toEqual( 2 );
             expect( errorArray[ 1 ] ).toEqual( 'minLength error.')
         });
-
 
     });
 

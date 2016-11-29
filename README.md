@@ -1,5 +1,6 @@
 # vadacl
-vadacl ("validation at domain and component levels") is a small TypeScript library for Angular 2 that enhances the reactive form validation features provided in Angular 2.  It provides a means by which developers can set domain/database-based 
+vadacl ("validation at domain and component levels") is a small TypeScript library for Angular 2 that enhances the 
+reactive form validation features provided in Angular 2.  It provides a means by which developers can set domain/database-based 
 validation rules on data objects but then augment or override those validations as needed within different components.
 It also lets developers add and override validation error messages that are added to the validation metadata returned 
 by the validation methods.
@@ -243,9 +244,70 @@ If combining domain and component-level validations is vadacl's primary purpose,
 messages is its secondary purpose.  Even though the same domain-level validation rules are applied, the error messages
 for those rules can be altered via the component validation settings to fit the context.
 
-vadacl also allows you to go in the other direction:  if you don't provide error message text in either the domain or 
-component-level settings for a given validation method, the method will return its own generic error message as defined
-in whatever Messages module is imported into the ValidationMethods class.
+vadacl also allows you to configure the validation messages within a locale-based Messages object.  This object contains
+two different sets of message configurations:
+
+* Default validation method messages: generic messages returned for the given validation method if you don't provide 
+error message text in either the domain-level validation settings, the component-level settings, or locale-based domain
+class validations (see next bullet).
+
+* Locale-based domain class validation messages (added with release 0.1.0): specific messages for a given domain 
+class / property / validation error.  Provides an alternative to defining the error messages amongst the validation 
+settings in the domain class, allowing you to keep all of the messages in one place and to swap sets of messages at 
+build time by targeting a different file.  These messages can still be overridden at both the domain and component levels.
+
+The following Messages object (imported by the ValidationMethods class) provides examples of both sets:
+
+```javascript
+let Messages = {
+
+    /* DEFAULT LOCALE VALIDATOR ERROR MESSAGES */
+    required: 'A value is required',
+    minlength: 'The value is too short.',
+    maxlength: 'The value is too long.',
+    pattern: 'The value does not match the pattern.',
+    withinlength: 'The value does not meet the size requirements',
+
+
+    /* LOCALE-BASED DOMAIN CLASS MESSAGES */
+    Company: {
+        name: {
+            required: 'Please enter a name for the company.',
+            pattern: 'The company name cannot contain letters or spaces.'
+        },
+        city: {
+            required: 'Please enter the city the company is based in.',
+            minlength: 'The city name must be at least 2 characters long.'
+        },
+        state: {
+            required: 'Please enter the state the company is based in.',
+            pattern: 'The state should be a 2-letter capitalized abbreviation.'
+        },
+        zip: {
+            required: 'Please enter the zip code the company is based in.',
+            pattern: 'Please enter the zip as a 5-digit code.'
+        }
+    },
+
+    /*
+     By extending Company class as a class with a different name, you can create different validation messages for a
+     different usage of what is essentially the same class.
+    */
+    EnterpriseCompany: {
+        name: {
+            required: 'Please enter a name for the enterprise.',
+            pattern: 'The enterprise name cannot contain letters or spaces.'
+        },
+        city: {
+            required: 'Please enter the city the enterprise is based in.',
+            minlength: 'The enterprise name must be at least 2 characters long.'
+        }
+        //The state and zip validation messages will fall back to the locale validation message defaults
+    }
+};
+``` 
+Note the fact that validation property names are all in lowercase, not camelCase like the method names.  They match the 
+key name of the metadata object returned by the validation method when the value is invalid.
 
 The Vadacl class also includes methods that assist with the task of displaying the validation error messages in the 
 component template, eliminating the need to conditionally display different DOM elements for different validation errors:
@@ -275,6 +337,32 @@ in the appropriate Angular module(s) and inject it into your components like any
 * You can keep the regular expression patterns for particular validations (email addresses, website URLs, etc.) in the 
 Patterns module incorporated in the vadacl architecture.
 
+## Internationalization (i18n)
+
+The official documentation regarding [internationalization in Angular 2](https://angular.io/docs/ts/latest/cookbook/i18n.html)
+explains how fragments of text (sentences, phrases) can be replaced with the equivalent text for another language by tagging
+the DOM element containing the fragment with the "i18n" custom attribute as per the instructions, and performing the 
+language swap at compile time.
+
+You can follow that model for implementing i18n while still using vadacl by not providing your validation messages via 
+vadacl, but rather by DOM elements conditionally displayed based on the type of validation error:
+
+```
+<ul>
+    <li *ngIf="companyForm.controls.zip.errors.required" i18n="...">
+        Postal code is required.
+    </li>
+    <li *ngIf="companyForm.controls.zip.errors.pattern" i18n="...">
+        Postal code does not fit the pattern.
+    </li>
+</ul>
+```
+
+Alternatively, you could define different locale-based domain class validation messages for different languages using 
+different source files for the Messages object, and simply add a pre-compile step in your build process that would alter 
+which file was used as the Messages import in the validation-methods.ts file based on the desired language.
+In that scenario, you might still end up using DOM element-based messages like in the preceding example when messages 
+need to be altered at a component level.
 
 ## Usage, Execution, and Testing Instructions
 
@@ -299,6 +387,10 @@ the main project folder, run "npm install" to get the needed Node modules, and t
 
 ## Release Notes
 
+### 0.1.0
+
+* Added support for defining locale-based domain class messages in the Messages object.
+
 ### 0.0.2
 
 * Added unit tests for Vadacl and ValidationMethod classes.
@@ -313,6 +405,3 @@ the main project folder, run "npm install" to get the needed Node modules, and t
 Currently the roadmap for improving vadacl includes the following items:
 
 * The addition of more validation methods.
-
-* Adding the ability to set domain-level validation error messages in the Messages module to accommodate simple 
-internationalization.

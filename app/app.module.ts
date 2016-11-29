@@ -10,8 +10,10 @@ import { AddressComponent } from './views/address/address.component';
 import { CompanyNameComponent } from './views/company-name/company-name.component';
 import { CustomerProfileComponent } from './views/customer-profile/customer-profile.component';
 import { AdminProfileComponent } from './views/admin-profile/admin-profile.component';
+import { CompanyComponent } from './views/company/company.component';
 
 import { Vadacl as VadaclService } from './vadacl/vadacl';
+
 
 
 @NgModule({
@@ -27,7 +29,8 @@ import { Vadacl as VadaclService } from './vadacl/vadacl';
         AdminProfileComponent,
         PatientComponent,
         AddressComponent,
-        CompanyNameComponent
+        CompanyNameComponent,
+        CompanyComponent
     ],
     providers: [
         VadaclService

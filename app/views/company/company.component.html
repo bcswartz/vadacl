@@ -1,0 +1,99 @@
+<h3>Company Form</h3>
+
+<div class="row">
+    <div class="col-md-8">
+        <form class="form-horizontal well well-sm" [formGroup]="companyForm">
+
+            <div class="form-group">
+                <label for="name" class="col-md-2 control-label">Company Name:</label>
+                <div class="col-md-6">
+                    <input id="name" type="text" class="form-control" formControlName="name">
+                    <div *ngIf="pageReady && showErrors( companyForm.controls.name )" class="alert alert-danger">
+                        <ul>
+                            <li *ngFor="let error of getControlErrors( companyForm.controls.name )">
+                                {{error}}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    Field is required. Cannot contain spaces or numbers.
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="city" class="col-md-2 control-label">City:</label>
+                <div class="col-md-6">
+                    <input id="city" type="text" class="form-control" formControlName="city">
+                    <div *ngIf="pageReady && showErrors( companyForm.controls.city )" class="alert alert-danger">
+                        <ul>
+                            <li *ngFor="let error of getControlErrors( companyForm.controls.city )">
+                                {{error}}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    Field is required.  Must be at least 2 characters long.
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="state" class="col-md-2 control-label">State:</label>
+                <div class="col-md-6">
+                    <input id="state" type="text" class="form-control" formControlName="state">
+                    <div *ngIf="pageReady && showErrors( companyForm.controls.state )" class="alert alert-danger">
+                        <ul>
+                            <!-- Demonstrates pulling the message directly from the returned error metadata -->
+                            <li *ngIf="companyForm.controls.state.errors.required">
+                                {{companyForm.controls.state.errors.required.message}}
+                            </li>
+                            <li *ngIf="companyForm.controls.state.errors.pattern">
+                                {{companyForm.controls.state.errors.pattern.message}}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    Field is required.  Must be 2-letter capitalized abbreviation.
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label for="zip" class="col-md-2 control-label">Zip Code:</label>
+                <div class="col-md-6">
+                    <input id="zip" type="text" class="form-control" formControlName="zip">
+                    <div *ngIf="pageReady && showErrors( companyForm.controls.zip )" class="alert alert-danger">
+                        <ul>
+                            <!-- Demonstrates "hard-coding" validation messages based on the type of error message -->
+                            <li *ngIf="companyForm.controls.zip.errors.required">
+                                Postal code is required.
+                            </li>
+                            <li *ngIf="companyForm.controls.zip.errors.pattern">
+                                Postal code does not fit the pattern.
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    Field is required.  Must be a 5-digit zip code.
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 col-md-offset-2">
+                    <button type="button" class="btn btn-primary" [disabled]="!companyForm.valid" (click)="submitForm()">Submit</button>
+                    <button type="button" class="btn btn-default" (click)="resetForm()">Reset</button>
+                </div>
+                <div class="col-md-2 col-md-offset-1">
+                    <span class="label label-success" *ngIf="formSubmitted">Data submitted!</span>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-8">
+        <a class="btn btn-primary" [routerLink]="['/home']">Return to Main Page</a>
+    </div>
+</div>

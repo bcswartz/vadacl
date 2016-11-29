@@ -5,6 +5,7 @@ import { PatientComponent } from './views/patient/patient.component';
 import { CompanyNameComponent } from './views/company-name/company-name.component';
 import { CustomerProfileComponent } from "./views/customer-profile/customer-profile.component";
 import { AdminProfileComponent } from './views/admin-profile/admin-profile.component';
+import { CompanyComponent } from './views/company/company.component';
 
 const appRoutes: Routes = [
     { path: 'home', component: HomeComponent },
@@ -13,6 +14,7 @@ const appRoutes: Routes = [
     { path: 'admin-profile', component: AdminProfileComponent },
     { path: 'patient', component: PatientComponent },
     { path: 'address', component: AddressComponent },
+    { path: 'company', component: CompanyComponent },
     { path: 'company-name', component: CompanyNameComponent }
 ];
 

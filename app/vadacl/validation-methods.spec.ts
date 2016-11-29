@@ -1,19 +1,67 @@
 import { FormControl, Validators } from '@angular/forms';
 import { ValidationMethods } from './validation-methods';
-import { Messages } from './messages/messages-en';
+import { Messages } from './locale/messages-en';
 
 describe( 'ValidationMethods', () => {
     let formControl: FormControl;
 
-    //Set default message values for testing
+    //Set locale default message values for testing
     Messages.required = 'default required message';
-    Messages.minLength = 'default minLength message';
-    Messages.maxLength = 'default maxLength message';
+    Messages.minlength = 'default minLength message';
+    Messages.maxlength = 'default maxLength message';
     Messages.pattern = 'default pattern message';
-    Messages.withinLength = 'default withinLength message';
+    Messages.withinlength = 'default withinLength message';
+
+    //Set locale message values for a specific class
+    Messages[ 'Widget' ] = {
+        name: {
+            required: 'widget required message' ,
+            minlength: 'widget minlength message',
+            maxlength: 'widget maxlength message',
+            pattern: 'widget pattern message',
+            withinlength: 'widget withinlength message'
+        }
+    };
+
+    Messages[ 'Address' ] = {
+        street: {
+            required: 'address required message'
+        }
+    };
 
     beforeEach( () => {
         formControl = new FormControl( null );
+    });
+
+    describe( 'getLocaleMessage: ', () => {
+        describe( 'should return default locale validation method message', () => {
+            it( 'when no class name is passed in', () => {
+                let msg = ValidationMethods.getLocaleMessage( 'required' );
+                expect( msg ).toEqual( 'default required message' );
+            });
+            it( 'when no property name is passed in', () => {
+                let msg = ValidationMethods.getLocaleMessage( 'required', 'Widget' );
+                expect( msg ).toEqual( 'default required message' );
+            });
+            it( 'when the class name is not present in Messages', () => {
+                let msg = ValidationMethods.getLocaleMessage( 'required', 'Sprocket', 'name' );
+                expect( msg ).toEqual( 'default required message' );
+            });
+            it( 'when the property of the specified class is not present in Messages', () => {
+                let msg = ValidationMethods.getLocaleMessage( 'required', 'Widget', 'id' );
+                expect( msg ).toEqual( 'default required message' );
+            });
+            it( 'when the validation error message isn\'t present for the specified object property', () => {
+                let msg = ValidationMethods.getLocaleMessage( 'minlength', 'Address', 'street' );
+                expect( msg ).toEqual( 'default minLength message' );
+            });
+        });
+        describe( 'should return locale class property message in Messages', () => {
+            it( 'when Messages message exists for given object/property/validation combination', () => {
+                let msg = ValidationMethods.getLocaleMessage( 'required', 'Widget', 'name' );
+                expect( msg ).toEqual( 'widget required message' );
+            });
+        });
     });
 
     describe( 'isEmpty:', () => {
@@ -109,6 +157,18 @@ describe( 'ValidationMethods', () => {
                     let result = func( formControl );
                     expect( result.required.message ).toEqual( 'custom required message' );
                 });
+
+                it( 'that uses locale class property message when match found', () => {
+                    let func = ValidationMethods.required( null, 'Widget', 'name' );
+                    let result = func( formControl );
+                    expect( result.required.message ).toEqual( 'widget required message' );
+                });
+
+                it( 'that overrides locale class property message when custom message is provided', () => {
+                    let func = ValidationMethods.required( 'custom required message', 'Widget', 'name' );
+                    let result = func( formControl );
+                    expect( result.required.message ).toEqual( 'custom required message' );
+                });
             });
         });
     });
@@ -181,11 +241,23 @@ describe( 'ValidationMethods', () => {
                 it( 'that uses default minLength message when no message argument is provided', () => {
                     let result = fn( formControl );
                     expect( result.minlength.message ).toBeDefined();
-                    expect( result.minlength.message ).toEqual( Messages.minLength );
+                    expect( result.minlength.message ).toEqual( Messages.minlength );
                 });
 
                 it( 'that uses message from argument in error metadata', () => {
                     let func = ValidationMethods.minLength( 3, 'custom minLength message' );
+                    let result = func( formControl );
+                    expect( result[ 'minlength' ].message ).toEqual( 'custom minLength message' );
+                });
+
+                it( 'that uses locale class property message when match found', () => {
+                    let func = ValidationMethods.minLength( 3, null, 'Widget', 'name' );
+                    let result = func( formControl );
+                    expect( result[ 'minlength' ].message ).toEqual( 'widget minlength message' );
+                });
+
+                it( 'that overrides locale class property message when custom message is provided', () => {
+                    let func = ValidationMethods.minLength( 3, 'custom minLength message', 'Widget', 'name' );
                     let result = func( formControl );
                     expect( result[ 'minlength' ].message ).toEqual( 'custom minLength message' );
                 });
@@ -262,7 +334,7 @@ describe( 'ValidationMethods', () => {
                 it( 'that uses default maxLength message when no message argument is provided', () => {
                     let result = fn( formControl );
                     expect( result.maxlength.message ).toBeDefined();
-                    expect( result.maxlength.message ).toEqual( Messages.maxLength );
+                    expect( result.maxlength.message ).toEqual( Messages.maxlength );
                 });
 
                 it( 'that uses message from argument in error metadata', () => {
@@ -271,6 +343,17 @@ describe( 'ValidationMethods', () => {
                     expect( result[ 'maxlength' ].message ).toEqual( 'custom maxLength message' );
                 });
 
+                it( 'that uses locale class property message when match found', () => {
+                    let func = ValidationMethods.maxLength( 5, null, 'Widget', 'name' );
+                    let result = func( formControl );
+                    expect( result[ 'maxlength' ].message ).toEqual( 'widget maxlength message' );
+                });
+
+                it( 'that overrides locale class property message when custom message is provided', () => {
+                    let func = ValidationMethods.maxLength( 5, 'custom maxLength message', 'Widget', 'name' );
+                    let result = func( formControl );
+                    expect( result[ 'maxlength' ].message ).toEqual( 'custom maxLength message' );
+                });
             });
         });
     });
@@ -348,6 +431,18 @@ describe( 'ValidationMethods', () => {
 
                 it( 'that uses message from argument in error metadata', () => {
                     let func = ValidationMethods.pattern( '[0-9]*', 'custom pattern message' );
+                    let result = func( formControl );
+                    expect( result[ 'pattern' ].message ).toEqual( 'custom pattern message' );
+                });
+
+                it( 'that uses locale class property message when match found', () => {
+                    let func = ValidationMethods.pattern( '[0-9]*', null, 'Widget', 'name' );
+                    let result = func( formControl );
+                    expect( result[ 'pattern' ].message ).toEqual( 'widget pattern message' );
+                });
+
+                it( 'that overrides locale class property message when custom message is provided', () => {
+                    let func = ValidationMethods.pattern( '[0-9]*', 'custom pattern message', 'Widget', 'name' );
                     let result = func( formControl );
                     expect( result[ 'pattern' ].message ).toEqual( 'custom pattern message' );
                 });
@@ -456,11 +551,23 @@ describe( 'ValidationMethods', () => {
                 it( 'that uses default withinLength message when no message argument is provided', () => {
                     let result = fn( formControl );
                     expect( result.withinlength.message ).toBeDefined();
-                    expect( result.withinlength.message ).toEqual( Messages.withinLength );
+                    expect( result.withinlength.message ).toEqual( Messages.withinlength );
                 });
 
                 it( 'that uses message from argument in error metadata', () => {
                     let func = ValidationMethods.withinLength( 3, 7 , 'custom withinLength message' );
+                    let result = func( formControl );
+                    expect( result[ 'withinlength' ].message ).toEqual( 'custom withinLength message' );
+                });
+
+                it( 'that uses locale class property message when match found', () => {
+                    let func = ValidationMethods.withinLength( 3, 7 , null, 'Widget', 'name' );
+                    let result = func( formControl );
+                    expect( result[ 'withinlength' ].message ).toEqual( 'widget withinlength message' );
+                });
+
+                it( 'that overrides locale class property message when custom message is provided', () => {
+                    let func = ValidationMethods.withinLength( 3, 7 , 'custom withinLength message', 'Widget', 'name' );
                     let result = func( formControl );
                     expect( result[ 'withinlength' ].message ).toEqual( 'custom withinLength message' );
                 });

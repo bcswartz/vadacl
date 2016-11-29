@@ -98,7 +98,7 @@ export class Vadacl {
 
     /*
      Returns array of error messages. By default, error messages only returned when control is dirty.
-    */
+     */
     getControlErrors( control: AbstractControl, onlyWhenDirty: boolean = true ) : string[] {
         let errorMessages: string[] = [];
         if( ( !onlyWhenDirty || control.dirty ) && control.errors ) {
@@ -115,7 +115,7 @@ export class Vadacl {
     /*
      Ensures a programmatic change to an AbstractControl value is marked as dirty (and by default as touched)
      prior to the change, properly invoking validation and the display of any validation errors.
-    */
+     */
     changeControlValue( control: AbstractControl, value: any, markTouched: boolean = true ) : void {
         control.markAsDirty();
         if( markTouched) { control.markAsTouched() };
