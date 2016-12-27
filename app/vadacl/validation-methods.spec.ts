@@ -1,4 +1,4 @@
-import { FormControl, Validators } from '@angular/forms';
+import { FormControl, FormGroup, FormArray, Validators } from '@angular/forms';
 import { ValidationMethods } from './validation-methods';
 import { Messages } from './locale/messages-en';
 
@@ -11,6 +11,7 @@ describe( 'ValidationMethods', () => {
     Messages.maxlength = 'default maxLength message';
     Messages.pattern = 'default pattern message';
     Messages.withinlength = 'default withinLength message';
+    Messages.totals = 'default totals message';
 
     //Set locale message values for a specific class
     Messages[ 'Widget' ] = {
@@ -19,7 +20,8 @@ describe( 'ValidationMethods', () => {
             minlength: 'widget minlength message',
             maxlength: 'widget maxlength message',
             pattern: 'widget pattern message',
-            withinlength: 'widget withinlength message'
+            withinlength: 'widget withinlength message',
+            totals: 'widget totals message'
         }
     };
 
@@ -570,6 +572,144 @@ describe( 'ValidationMethods', () => {
                     let func = ValidationMethods.withinLength( 3, 7 , 'custom withinLength message', 'Widget', 'name' );
                     let result = func( formControl );
                     expect( result[ 'withinlength' ].message ).toEqual( 'custom withinLength message' );
+                });
+            });
+        });
+    });
+
+    describe( 'totals:', () => {
+
+        it( 'returns a validation function', () => {
+            expect( ValidationMethods.totals( 100 ) ).toEqual( jasmine.any( Function ) );
+        });
+
+        describe( 'validation method', () => {
+            let fn: any;
+            let percentageGroup: FormGroup;
+            let percentageArray: FormArray;
+
+            beforeEach( () => {
+                fn = ValidationMethods.totals( 100 );
+                percentageGroup = new FormGroup( {
+                    'working': new FormControl( null ),
+                    'playing': new FormControl( null ),
+                    'sleeping': new FormControl( null )
+                });
+
+                percentageArray = new FormArray( [
+                    new FormControl( null ),
+                    new FormControl( null ),
+                    new FormControl( null )
+                ]);
+            });
+
+            describe( 'returns null', () => {
+                it( 'when FormGroup control values add up to required total', () => {
+                    percentageGroup.controls[ 'working' ].setValue( 20 );
+                    percentageGroup.controls[ 'playing' ].setValue( 40 );
+                    percentageGroup.controls[ 'sleeping' ].setValue( 40 );
+                    expect( fn( percentageGroup ) ).toBeNull();
+
+                    //String values are converted to numbers
+                    percentageGroup.controls[ 'working' ].setValue( '20' );
+                    percentageGroup.controls[ 'playing' ].setValue( '40' );
+                    percentageGroup.controls[ 'sleeping' ].setValue( '40' );
+                    expect( fn( percentageGroup ) ).toBeNull();
+                });
+
+                it( 'when FormArray control values add up to required total', () => {
+                    percentageArray.controls[ 0 ].setValue( 50 );
+                    percentageArray.controls[ 1 ].setValue( 25 );
+                    percentageArray.controls[ 2 ].setValue( 25 );
+                    expect( fn( percentageArray ) ).toBeNull();
+
+                    //String values are converted to numbers
+                    percentageArray.controls[ 0 ].setValue( '50' );
+                    percentageArray.controls[ 1 ].setValue( '25' );
+                    percentageArray.controls[ 2 ].setValue( '25' );
+                    expect( fn( percentageArray ) ).toBeNull();
+                });
+            });
+
+            describe( 'returns error metadata object', () => {
+
+                it( 'when FormGroup control values are all null', () => {
+                    let result = fn( percentageGroup );
+                    expect( result ).not.toBeNull();
+                    expect( result.totals ).toBeDefined();
+                });
+
+                it( 'when FormArray control values are all null', () => {
+                    let result = fn( percentageArray );
+                    expect( result ).not.toBeNull();
+                    expect( result.totals ).toBeDefined();
+                });
+
+                it( 'when FormArray control values do not add up to required total', () => {
+                    percentageGroup.controls[ 'working' ].setValue( 10 );
+                    percentageGroup.controls[ 'playing' ].setValue( 10 );
+                    percentageGroup.controls[ 'sleeping' ].setValue( 10 );
+                    let result = fn( percentageGroup );
+                    expect( result ).not.toBeNull();
+                    expect( result.totals ).toBeDefined();
+                });
+
+                it( 'when FormArray control values do not add up to required total', () => {
+                    percentageArray.controls[ 0 ].setValue( 10 );
+                    percentageArray.controls[ 1 ].setValue( 5 );
+                    percentageArray.controls[ 2 ].setValue( null );
+                    let result = fn( percentageArray );
+                    expect( result ).not.toBeNull();
+                    expect( result.totals ).toBeDefined();
+                });
+
+                it( 'with expected metadata properties, with actualTotal undefined if no values found', () => {
+                    let result = fn( percentageGroup );
+                    expect( result.totals.requiredTotal ).toEqual( 100 );
+                    expect( result.totals.actualTotal ).toBeUndefined();
+                });
+
+                it( 'with expected metadata properties, with actualTotal set to total of any provided values', () => {
+                    percentageArray.controls[ 0 ].setValue( 10 );
+                    percentageArray.controls[ 1 ].setValue( 5 );
+                    percentageArray.controls[ 2 ].setValue( null );
+                    let result = fn( percentageArray );
+                    expect( result.totals.requiredTotal ).toEqual( 100 );
+                    expect( result.totals.actualTotal ).toEqual( 15 );
+                });
+
+                it( 'with actualTotal value being numeric even when control values are not', () => {
+                    percentageArray.controls[ 0 ].setValue( '25' );
+                    percentageArray.controls[ 1 ].setValue( '5' );
+                    percentageArray.controls[ 2 ].setValue( null );
+                    let result = fn( percentageArray );
+                    expect( result.totals.requiredTotal ).toEqual( 100 );
+                    expect( result.totals.actualTotal ).toEqual( 30 );
+                });
+
+                it( 'that uses default totals message when no message argument is provided', () => {
+                    let result = fn( percentageGroup );
+                    console.log( result.totals );
+                    expect( result.totals.message ).toBeDefined();
+                    expect( result.totals.message ).toEqual( Messages.totals );
+                });
+
+                it( 'that uses message from argument in error metadata', () => {
+                    let func = ValidationMethods.totals( 5, 'custom totals message' );
+                    let result = func( percentageGroup );
+                    expect( result[ 'totals' ].message ).toEqual( 'custom totals message' );
+                });
+
+                it( 'that uses locale class property message when match found', () => {
+                    let func = ValidationMethods.totals( 5, null, 'Widget', 'name' );
+                    let result = func( percentageGroup );
+                    expect( result[ 'totals' ].message ).toEqual( 'widget totals message' );
+                });
+
+                it( 'that overrides locale class property message when custom message is provided', () => {
+                    let func = ValidationMethods.totals( 5, 'custom totals message', 'Widget', 'name' );
+                    let result = func( percentageGroup );
+                    expect( result[ 'totals' ].message ).toEqual( 'custom totals message' );
                 });
             });
         });

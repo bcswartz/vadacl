@@ -32,6 +32,12 @@ describe( 'Vadacl', () => {
                 spyOn( vadacl, 'getValidatorArguments' ).and.returnValue( [] );
             });
 
+            it( 'should receive an empty object literal object if the domain class and property name arguments are null', () => {
+                vadacl.applyRules( null, null );
+                expect( vadacl.mergeValidations ).toHaveBeenCalled();
+                expect( vadacl.mergeValidations[ "calls" ].argsFor( 0 )[ 0 ]).toEqual( {} );
+            });
+
             it( 'should receive an empty object literal object as first argument if no validations exist', () => {
                 let emptyDomainClass = { companyName: 'Money Inc.'};
                 vadacl.applyRules( emptyDomainClass, 'companyName' );
@@ -150,10 +156,198 @@ describe( 'Vadacl', () => {
                 });
             });
 
+            it( 'an error if a validation setting references a non-existent validation method', () => {
+                expect( () => vadacl.applyRules( domainClass, 'firstName', { bogusMethod: { message: 'doesNotExist' }} ) )
+                    .toThrow( '*** Error thrown by Vadacl.applyRules: Validation method "bogusMethod" is undefined in ValidationMethods. ***' );
+
+                domainClass = {
+                    lastName: 'Boxer',
+                    validations: {
+                        lastName: { alsoBogus: { message: 'alsoDoesNotExist' } }
+                    }
+                };
+
+                expect( () => vadacl.applyRules( domainClass, 'lastName' ) )
+                    .toThrow( '*** Error thrown by Vadacl.applyRules: Validation method "alsoBogus" is undefined in ValidationMethods. ***' );
+            });
+
         });
 
     });
 
+    describe( 'applyCollectionRule: ', () => {
+        let domainClass: any;
+
+        beforeEach( () => {
+            domainClass = {
+                activityTotal: 'Bob',
+                validations: {
+                    activityTotal: {
+                        totals: { total: 100, message: 'must total 100' }
+                    }
+                }
+            };
+
+        });
+
+        describe( 'internal call to mergeValidations', () => {
+            beforeEach( () => {
+                spyOn( vadacl, 'mergeValidations' ).and.returnValue( {} );
+                spyOn( vadacl, 'getValidatorArguments' ).and.returnValue( [] );
+            });
+
+            it( 'should receive an empty object literal object as first argument if the domain class and property arguments are null', () => {
+                vadacl.applyCollectionRule( null, null );
+                expect( vadacl.mergeValidations ).toHaveBeenCalled();
+                expect( vadacl.mergeValidations[ "calls" ].argsFor( 0 )[ 0 ]).toEqual( {} );
+            });
+
+            it( 'should receive an empty object literal object as first argument if no validations exist', () => {
+                let emptyDomainClass = { companyName: 'Money Inc.'};
+                vadacl.applyCollectionRule( emptyDomainClass, 'companyName' );
+                expect( vadacl.mergeValidations ).toHaveBeenCalled();
+                expect( vadacl.mergeValidations[ "calls" ].argsFor( 0 )[ 0 ]).toEqual( {} );
+            });
+
+            it( 'should receive an empty object literal object as first argument if no validations for property', () => {
+                vadacl.applyCollectionRule( domainClass, 'companyName' );
+                expect( vadacl.mergeValidations ).toHaveBeenCalled();
+                expect( vadacl.mergeValidations[ "calls" ].argsFor( 0 )[ 0 ]).toEqual( {} );
+            });
+
+            it( 'should receive the property validations as the first argument', () => {
+                vadacl.applyCollectionRule( domainClass, 'activityTotal' );
+                expect( vadacl.mergeValidations ).toHaveBeenCalled();
+                expect( vadacl.mergeValidations[ "calls" ].argsFor( 0 )[ 0 ]).toEqual( domainClass.validations.activityTotal );
+            });
+
+            it( 'should receive any validation overrides as the second argument', () => {
+                vadacl.applyCollectionRule( domainClass, 'activityTotal', { totals: { total: 50 }} );
+                expect( vadacl.mergeValidations ).toHaveBeenCalled();
+                expect( vadacl.mergeValidations[ "calls" ].argsFor( 0 )[ 0 ]).toEqual( domainClass.validations.activityTotal );
+                expect( vadacl.mergeValidations[ "calls" ].argsFor( 0 )[ 1 ]).toEqual( { totals: { total: 50 } } );
+            });
+        });
+
+        describe( 'internal call to getValidatorArguments', () => {
+
+            beforeEach( () => {
+                spyOn( ValidationMethods, 'totals' ).and.returnValue( function() { return 'totals' } );
+
+                spyOn( vadacl, 'getMethodDeclaredArguments' ).and.returnValue( [ 'total', 'message' ] );
+                spyOn( vadacl, 'mergeValidations' ).and.returnValue( domainClass.validations.activityTotal );
+                spyOn( vadacl, 'getValidatorArguments' ).and.returnValue( [] );
+            });
+
+            it( 'should receive the returned value of getMethodDeclaredArguments as the first argument', () => {
+                vadacl.applyCollectionRule( domainClass, 'activityTotal' );
+                expect( vadacl.getValidatorArguments ).toHaveBeenCalled();
+                expect( vadacl.getValidatorArguments[ "calls" ].argsFor( 0 )[ 0 ]).toEqual( [ 'total', 'message' ] );
+            });
+
+            it( 'should receive the properties of the specified validation as the second argument', () => {
+                vadacl.applyCollectionRule( domainClass, 'activityTotal' );
+                expect( vadacl.getValidatorArguments ).toHaveBeenCalled();
+                expect( vadacl.getValidatorArguments[ "calls" ].argsFor( 0 )[ 1 ]).toEqual( domainClass.validations.activityTotal.totals );
+            });
+        });
+
+        describe( 'should return', () => {
+            beforeEach( () => {
+                spyOn( vadacl, 'mergeValidations' ).and.callFake( ( base, overrides ) => {
+                    if( overrides != undefined ) {
+                        for( let setting in overrides ) {
+                            base[ setting ] = overrides[ setting ]
+                        }
+                    }
+                    return base;
+                });
+
+                spyOn( vadacl, 'getValidatorArguments' ).and.returnValue( [] );
+            });
+
+
+            describe( 'an undefined object', () => {
+                it( 'for a domain class with no properties', () => {
+                    domainClass = {};
+                    expect( vadacl.applyCollectionRule( domainClass, null ) ).toBeUndefined();
+                });
+
+                it( 'when no validations are defined', () => {
+                    domainClass = { firstName: 'Bob' };
+                    expect( vadacl.applyCollectionRule( domainClass, 'firstName' ) ).toBeUndefined();
+                });
+
+                it( 'when no validations are defined for the specified property name', () => {
+                    domainClass = {
+                        firstName: 'Bob',
+                        validations: {
+                            age: { required: { message: 'age required' } }
+                        }
+                    };
+
+                    expect( vadacl.applyCollectionRule( domainClass, 'firstName' ) ).toBeUndefined();
+                });
+
+                it( 'when the specified property does not exist', () => {
+                    expect( vadacl.applyCollectionRule( domainClass, 'notThere' ) ).toBeUndefined( [] );
+                });
+            });
+
+            describe( 'the specified ValidationMethods method', () => {
+                beforeEach( () => {
+                    spyOn( ValidationMethods, 'totals' ).and.returnValue( function( num ) { return 'totals' } );
+                });
+
+                it( 'that matches the base validation when no override is provided', () => {
+                    let validator = vadacl.applyCollectionRule( domainClass, 'activityTotal' );
+                    expect( vadacl.getValidatorArguments[ "calls" ].argsFor( 0 )[ 1 ].total ).toEqual( 100 );
+                    expect( validator.call( 0 ) ).toEqual( 'totals' );
+                });
+
+                it( 'that reflect the merge of the base and override validation when provided', () => {
+                    let override = { totals: { total: 100, message: 'total override' } };
+                    let validator = vadacl.applyCollectionRule( domainClass, 'activityTotal', override );
+                    expect( vadacl.getValidatorArguments[ "calls" ].argsFor( 0 )[ 1 ].message ).toEqual( 'total override' );
+                    expect( validator.call( 0 ) ).toEqual( 'totals' );
+                });
+            });
+
+            it( 'an error if a validation setting references a non-existent validation method', () => {
+                /*
+                 Cannot provide a non-existent validation method as an override without violating the
+                 PropertyValidations interface, so can only test via an untyped object validation setting
+                 */
+                domainClass = {
+                    lastName: 'Boxer',
+                    validations: {
+                        lastName: { bogus: { message: 'doesNotExist' } }
+                    }
+                };
+
+                expect( () => vadacl.applyCollectionRule( domainClass, 'lastName' ) )
+                    .toThrow( '*** Error thrown by Vadacl.applyCollectionRule: Validation method "bogus" is undefined in ValidationMethods. ***' );
+            });
+
+            it( 'an error if the method is used with multiple validations', () => {
+                domainClass = {
+                    lastName: 'Boxer',
+                    validations: {
+                        lastName: {
+                            required: { message: 'last name is required' },
+                            minLength: { minlength: 2, message: 'must be at least 2 characters' }
+                        }
+                    }
+                };
+
+                expect( () => vadacl.applyCollectionRule( domainClass, 'lastName' ) )
+                    .toThrow( '*** Error thrown by Vadacl.applyCollectionRule: A single validation method must be applied. ***' );
+
+            });
+
+        });
+
+    });
     describe( 'getMethodDeclaredArguments:', () => {
         let noArgumentFunction: any;
         let threeArgumentFunction: any;

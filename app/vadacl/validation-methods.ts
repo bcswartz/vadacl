@@ -1,5 +1,5 @@
 
-import { AbstractControl, Validators } from '@angular/forms';
+import { AbstractControl, FormGroup, FormArray, Validators } from '@angular/forms';
 import { Messages } from './locale/messages-en';
 
 /*
@@ -86,6 +86,35 @@ export class ValidationMethods {
             return v.length < minLength || v.length > maxLength ?
             { 'withinlength': { 'minLength': minLength, 'maxLength': maxLength, 'actualLength': v.length, 'message': msg } } :
                 null
+        }
+    }
+
+    static totals( total: number, message ?: string, className ?: string, propertyName ?: string ) {
+        let msg = message || ValidationMethods.getLocaleMessage( 'totals', className, propertyName );
+        return function ( controlCollection: FormGroup | FormArray ) {
+            let valueTotal;
+            if( controlCollection.controls instanceof Array ) {
+                for( let c in controlCollection.controls ) {
+                    if( valueTotal === undefined && controlCollection.controls[ c ].value ) {
+                        valueTotal = +controlCollection.controls[ c ].value;
+                    } else if( controlCollection.controls[ c ].value ) {
+                        valueTotal += +controlCollection.controls[ c ].value;
+                    }
+                }
+            } else {
+                let controlNames = Object.keys( controlCollection.controls );
+                for( let cn in controlNames ) {
+                    let currentControl = controlCollection.controls[ controlNames[ cn ] ];
+                    if( valueTotal === undefined && currentControl.value ) {
+                        valueTotal = +currentControl.value;
+                    } else if( currentControl.value ) {
+                        valueTotal += +currentControl.value;
+                    }
+                }
+            }
+
+            return total === valueTotal ? null :
+            { 'totals': { 'requiredTotal': total, 'actualTotal': valueTotal, 'message': msg } } ;
         }
     }
 

@@ -34,31 +34,23 @@ export class PatientComponent extends Vadacl implements OnInit {
      The percentageFormGroup is a FormGroup class contained within the main patientForm FormGroup
      */
     buildPercentageFormGroup() {
-        /*
-         A single validation method can be applied to a FormGroup object.  This custom method checks to see if all of
-         the percentage inputs add up to 100%.
-         */
-        function percentageValidation( formGroup: FormGroup ) {
-            let total = 0;
-            let controlNames = Object.keys( formGroup.controls );
-
-            for( let cn in controlNames ) {
-                let currentControl = formGroup.controls[ controlNames[cn] ];
-                total += currentControl ? + currentControl.value : 0;
-            }
-
-            return total === 100 ? null : { 'percentageWrong': { message: 'The percentages must add up to 100.'} }
-        }
-
         let percentageValidator: PropertyValidations = {
             pattern: { pattern: '^100$|^[1-9]{1}[0-9]{1}$|^[0-9]{1}$', message: 'Percentage must be a number between 0 and 100' }
         };
 
-        this.percentageFormGroup = new FormGroup( {
-            'working': new FormControl( null, this.applyRules( this.patient, 'workingPercentage', percentageValidator ) ),
-            'playing': new FormControl( null, this.applyRules( this.patient, 'playingPercentage', percentageValidator ) ),
-            'sleeping': new FormControl( null, this.applyRules( this.patient, 'sleepingPercentage', percentageValidator ) ),
-        }, percentageValidation );
+        /*
+         Settings for the totals validation method, which was introduced in release 0.2.0.  Prior to that, a custom
+         validation method for the percentageFormGroup was declared
+         */
+        let totalValidator: PropertyValidations = {
+            totals: { total: 100, message: 'The percentages must total up to 100.' }
+        };
+
+        this.percentageFormGroup = new FormGroup({
+            'working': new FormControl(null, this.applyRules(this.patient, 'workingPercentage', percentageValidator)),
+            'playing': new FormControl(null, this.applyRules(this.patient, 'playingPercentage', percentageValidator)),
+            'sleeping': new FormControl(null, this.applyRules(this.patient, 'sleepingPercentage', percentageValidator)),
+        }, this.applyCollectionRule( null, null, totalValidator ) );
 
     }
 
