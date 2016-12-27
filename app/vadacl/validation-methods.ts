@@ -61,12 +61,13 @@ export class ValidationMethods {
         }
     }
 
-    static pattern( pattern: string, message ?: string, className ?: string, propertyName ?: string  ) {
+    static pattern( pattern: string | RegExp, message ?: string, className ?: string, propertyName ?: string  ) {
         let msg = message || ValidationMethods.getLocaleMessage( 'pattern', className, propertyName );
         return function ( control: AbstractControl ) {
             //Use and invoke the official Angular 2 pattern Validator
             let baseValidator = Validators.pattern( pattern );
             let outcome = baseValidator( control) ;
+
             if ( outcome ) {
                 //Append the message
                 outcome[ 'pattern' ].message = msg;

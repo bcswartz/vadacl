@@ -398,12 +398,38 @@ describe( 'ValidationMethods', () => {
                     expect( result ).toBeNull();
                 });
 
-                it( 'when FormControl has string that matches the pattern argument', () => {
+                it( 'when the pattern argument is null', () => {
+                    let func = ValidationMethods.pattern( null );
+                    formControl.setValue( 'abc' );
+                    let result = func( formControl );
+                    expect( result ).toBeNull();
+                });
+
+                it( 'when the pattern argument is undefined', () => {
+                    let undefinedPattern: any;
+                    let func = ValidationMethods.pattern( undefinedPattern );
+                    formControl.setValue( 'abc' );
+                    let result = func( formControl );
+                    expect( result ).toBeNull();
+                });
+
+                it( 'when FormControl has string that matches the pattern string argument', () => {
                     formControl.setValue( '0' );
                     expect( fn( formControl ) ).toBeNull();
 
                     formControl.setValue( '99' );
                     expect( fn( formControl ) ).toBeNull();
+                });
+
+                it( 'when FormControl has string that matches the pattern RegExp argument', () => {
+                    let patternExpression: RegExp = new RegExp( '^[0-9]*$'  );
+                    let func = ValidationMethods.pattern( patternExpression );
+
+                    formControl.setValue( '0' );
+                    expect( func( formControl ) ).toBeNull();
+
+                    formControl.setValue( '99' );
+                    expect( func( formControl ) ).toBeNull();
                 });
             });
 
@@ -413,10 +439,18 @@ describe( 'ValidationMethods', () => {
                     formControl.setValue( 'abc' );
                 });
 
-                it( 'when FormControl has value that does not match the pattern argument', () => {
+                it( 'when FormControl has value that does not match the pattern string argument', () => {
                     let result = fn( formControl );
                     expect( result ).not.toBeNull();
                     expect( result.pattern ).toBeDefined();
+                });
+
+                it( 'when FormControl has value that does not match the pattern RegExp argument', () => {
+                    let patternExpression: RegExp = new RegExp( '^[0-9]*$' );
+                    let func = ValidationMethods.pattern( patternExpression );
+                    let result = func( formControl );
+                    expect( result ).not.toBeNull();
+                    expect( result[ 'pattern' ] ).toBeDefined();
                 });
 
                 it( 'with expected metadata properties', () => {
@@ -447,27 +481,6 @@ describe( 'ValidationMethods', () => {
                     let func = ValidationMethods.pattern( '[0-9]*', 'custom pattern message', 'Widget', 'name' );
                     let result = func( formControl );
                     expect( result[ 'pattern' ].message ).toEqual( 'custom pattern message' );
-                });
-
-                /*
-                 The official Angular 2 Validator pattern composes the final RegularExpression via
-                 string concatenation, so null and undefined pattern arguments are converted to string equivalents.
-                 */
-                it( 'when the pattern argument is null', () => {
-                    let func = ValidationMethods.pattern( null );
-                    formControl.setValue( 'abc' );
-                    let result = func( formControl );
-                    expect( result ).not.toBeNull();
-                    expect( result[ 'pattern' ].requiredPattern ).toEqual( '^null$' );
-                });
-
-                it( 'when the pattern argument is undefined', () => {
-                    let undefinedPattern: any;
-                    let func = ValidationMethods.pattern( undefinedPattern );
-                    formControl.setValue( 'abc' );
-                    let result = func( formControl );
-                    expect( result ).not.toBeNull();
-                    expect( result[ 'pattern' ].requiredPattern ).toEqual( '^undefined$' );
                 });
 
             });
@@ -689,7 +702,6 @@ describe( 'ValidationMethods', () => {
 
                 it( 'that uses default totals message when no message argument is provided', () => {
                     let result = fn( percentageGroup );
-                    console.log( result.totals );
                     expect( result.totals.message ).toBeDefined();
                     expect( result.totals.message ).toEqual( Messages.totals );
                 });
