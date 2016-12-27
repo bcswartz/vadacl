@@ -5,6 +5,10 @@ interface RequiredSettings {
     message ?: string
 }
 
+interface RequiredTrueSettings {
+    message ?: string
+}
+
 interface MinLengthSettings {
     minLength : number,
     message ?: string
@@ -36,6 +40,7 @@ interface TotalsSettings {
  */
 interface PropertyValidations {
     required ?: RequiredSettings,
+    requiredTrue ?: RequiredTrueSettings,
     minLength ?: MinLengthSettings,
     maxLength ?: MaxLengthSettings,
     pattern ?: PatternSettings,

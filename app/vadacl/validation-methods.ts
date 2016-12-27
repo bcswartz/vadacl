@@ -33,6 +33,13 @@ export class ValidationMethods {
         }
     }
 
+    static requiredTrue( message ?: string, className ?: string, propertyName ?: string ) {
+        let msg = message || ValidationMethods.getLocaleMessage( 'requiredtrue', className, propertyName );
+        return function( control: AbstractControl ) {
+            return control.value === true ? null : { 'requiredtrue': { 'isNotTrue': true, 'message': msg } };
+        }
+    }
+
     static minLength( minLength: number, message ?: string, className ?: string, propertyName ?: string ) {
         let msg = message || ValidationMethods.getLocaleMessage( 'minlength', className, propertyName );
         return function ( control: AbstractControl ) {
@@ -67,7 +74,6 @@ export class ValidationMethods {
             //Use and invoke the official Angular 2 pattern Validator
             let baseValidator = Validators.pattern( pattern );
             let outcome = baseValidator( control) ;
-
             if ( outcome ) {
                 //Append the message
                 outcome[ 'pattern' ].message = msg;

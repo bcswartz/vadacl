@@ -7,6 +7,7 @@ describe( 'ValidationMethods', () => {
 
     //Set locale default message values for testing
     Messages.required = 'default required message';
+    Messages.requiredtrue = 'default requiredTrue message';
     Messages.minlength = 'default minLength message';
     Messages.maxlength = 'default maxLength message';
     Messages.pattern = 'default pattern message';
@@ -16,7 +17,8 @@ describe( 'ValidationMethods', () => {
     //Set locale message values for a specific class
     Messages[ 'Widget' ] = {
         name: {
-            required: 'widget required message' ,
+            required: 'widget required message',
+            requiredtrue: 'widget requiredtrue message',
             minlength: 'widget minlength message',
             maxlength: 'widget maxlength message',
             pattern: 'widget pattern message',
@@ -170,6 +172,96 @@ describe( 'ValidationMethods', () => {
                     let func = ValidationMethods.required( 'custom required message', 'Widget', 'name' );
                     let result = func( formControl );
                     expect( result.required.message ).toEqual( 'custom required message' );
+                });
+            });
+        });
+    });
+
+    describe( 'requiredTrue:', () => {
+        it( 'returns a validation function', () => {
+            expect( ValidationMethods.required() ).toEqual( jasmine.any( Function ) );
+        });
+        describe( 'validation function', () => {
+            let fn: any;
+
+            beforeEach( () => {
+                fn = ValidationMethods.requiredTrue();
+            });
+
+            describe( 'returns null', () => {
+                it( 'when FormControl value is Boolean true', () => {
+                    formControl.setValue( true );
+                    expect( fn( formControl ) ).toBeNull();
+                });
+            });
+
+            describe( 'returns error metadata object', () => {
+                it( 'when FormControl value is null', () => {
+                    let result = fn( formControl );
+                    expect( result ).not.toBeNull();
+                    expect( result.requiredtrue ).toBeDefined();
+                    expect( result.requiredtrue.isNotTrue ).toBeDefined();
+                    expect( result.requiredtrue.isNotTrue ).toEqual( true );
+                });
+
+                it( 'when FormControl value is undefined', () => {
+                    let undefinedValue: any;
+                    formControl.setValue( undefinedValue );
+                    let result = fn( formControl );
+                    expect( result ).not.toBeNull();
+                    expect( result.requiredtrue ).toBeDefined();
+                    expect( result.requiredtrue.isNotTrue ).toBeDefined();
+                    expect( result.requiredtrue.isNotTrue ).toEqual( true );
+                });
+
+                it( 'when FormControl value is empty string', () => {
+                    formControl.setValue( '' );
+                    let result = fn( formControl );
+                    expect( result ).not.toBeNull();
+                    expect( result.requiredtrue ).toBeDefined();
+                    expect( result.requiredtrue.isNotTrue ).toBeDefined();
+                    expect( result.requiredtrue.isNotTrue ).toEqual( true );
+                });
+
+                it( 'when FormControl value is Boolean false', () => {
+                    formControl.setValue( false );
+                    let result = fn( formControl );
+                    expect( result ).not.toBeNull();
+                    expect( result.requiredtrue ).toBeDefined();
+                    expect( result.requiredtrue.isNotTrue ).toBeDefined();
+                    expect( result.requiredtrue.isNotTrue ).toEqual( true );
+                });
+
+                it( 'when FormControl value is string value of true', () => {
+                    formControl.setValue( 'true' );
+                    let result = fn( formControl );
+                    expect( result ).not.toBeNull();
+                    expect( result.requiredtrue ).toBeDefined();
+                    expect( result.requiredtrue.isNotTrue ).toBeDefined();
+                    expect( result.requiredtrue.isNotTrue ).toEqual( true );
+                });
+
+                it( 'that uses default required message when no message argument is provided', () => {
+                    let result = fn( formControl );
+                    expect( result.requiredtrue.message ).toEqual( Messages.requiredtrue );
+                });
+
+                it( 'that uses message from argument in error metadata', () => {
+                    let func = ValidationMethods.requiredTrue( 'custom requiredtrue message' );
+                    let result = func( formControl );
+                    expect( result.requiredtrue.message ).toEqual( 'custom requiredtrue message' );
+                });
+
+                it( 'that uses locale class property message when match found', () => {
+                    let func = ValidationMethods.requiredTrue( null, 'Widget', 'name' );
+                    let result = func( formControl );
+                    expect( result.requiredtrue.message ).toEqual( 'widget requiredtrue message' );
+                });
+
+                it( 'that overrides locale class property message when custom message is provided', () => {
+                    let func = ValidationMethods.requiredTrue( 'custom requiredtrue message', 'Widget', 'name' );
+                    let result = func( formControl );
+                    expect( result.requiredtrue.message ).toEqual( 'custom requiredtrue message' );
                 });
             });
         });

@@ -57,7 +57,7 @@ export class PatientComponent extends Vadacl implements OnInit {
     buildForm() {
         /*
          With this patient form, no changes are made to the withinLength validation applied to the username property at the
-         domain class level, but this form does want the password to be required.
+         domain class level, but this form does want the username to be required.
          */
         let usernameValidations = {
             required: { message: 'The username is required on this form.' }
@@ -67,6 +67,7 @@ export class PatientComponent extends Vadacl implements OnInit {
             'firstName': [ this.patient.firstName, this.applyRules( this.patient, 'firstName' ) ],
             'lastName': [ this.patient.lastName, this.applyRules( this.patient, 'lastName' )  ],
             'username': [ this.patient.username, this.applyRules( this.patient, 'username', usernameValidations )  ],
+            'agreement': [ this.patient.agreement, this.applyRules( this.patient, 'agreement' ) ],
             'percentages': this.percentageFormGroup
         });
     }

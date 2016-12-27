@@ -18,8 +18,8 @@ export class Vadacl {
 
         for( let mv in mergedValidations ) {
             //Add className and propertyName values to arguments
-            mergedValidations[ mv ].className = domainClass.constructor.name;
-            mergedValidations[ mv ].propertyName = propertyName;
+            mergedValidations[ mv ].className = domainClass ? domainClass.constructor.name : undefined;
+            mergedValidations[ mv ].propertyName = propertyName ? propertyName : undefined;;
 
             //Check that validation method exists
             if( ValidationMethods[ mv ] ) {
