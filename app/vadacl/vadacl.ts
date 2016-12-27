@@ -129,7 +129,7 @@ export class Vadacl {
      Determines whether the errors for the form element should be displayed.  By default, returns false
      if the element is still marked as untouched.
      */
-    showErrors( formElement: AbstractControl|FormGroup|FormArray, onlyAfterTouched: boolean = true ) : boolean {
+    showErrors( formElement: AbstractControl, onlyAfterTouched: boolean = true ) : boolean {
         let elementActive = onlyAfterTouched ? formElement.touched : true;
         return ( formElement.dirty && formElement.invalid && elementActive ) ? true : false
     }

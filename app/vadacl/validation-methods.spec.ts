@@ -220,6 +220,11 @@ describe( 'ValidationMethods', () => {
                     formControl.setValue( '1234' );
                     expect( fn( formControl ) ).toBeNull();
                 });
+
+                it( 'when FormArray has number of controls >= min length argument', () => {
+                    let formArray: FormArray = new FormArray( [ new FormControl(''), new FormControl(''), new FormControl('') ] );
+                    expect( fn( formArray ) ).toBeNull();
+                });
             });
 
             describe( 'returns error metadata object', () => {
@@ -230,6 +235,13 @@ describe( 'ValidationMethods', () => {
 
                 it( 'when FormControl has string with length < min length argument', () => {
                     let result = fn( formControl );
+                    expect( result ).not.toBeNull();
+                    expect( result.minlength ).toBeDefined();
+                });
+
+                it( 'when FormArray has number of controls < min length argument', () => {
+                    let formArray: FormArray = new FormArray( [ new FormControl(''), new FormControl('') ] );
+                    let result = fn( formArray );
                     expect( result ).not.toBeNull();
                     expect( result.minlength ).toBeDefined();
                 });
@@ -313,6 +325,11 @@ describe( 'ValidationMethods', () => {
                     formControl.setValue( '1234' );
                     expect( fn( formControl ) ).toBeNull();
                 });
+
+                it( 'when FormArray has number of controls <= max length argument', () => {
+                    let formArray: FormArray = new FormArray( [ new FormControl(''), new FormControl(''), new FormControl('') ] );
+                    expect( fn( formArray ) ).toBeNull();
+                });
             });
 
             describe( 'returns error metadata object', () => {
@@ -323,6 +340,20 @@ describe( 'ValidationMethods', () => {
 
                 it( 'when FormControl has string with length > min length argument', () => {
                     let result = fn( formControl );
+                    expect( result ).not.toBeNull();
+                    expect( result.maxlength ).toBeDefined();
+                });
+
+                it( 'when FormArray has number of controls > max length argument', () => {
+                    let formArray: FormArray = new FormArray( [
+                        new FormControl(''),
+                        new FormControl(''),
+                        new FormControl(''),
+                        new FormControl(''),
+                        new FormControl(''),
+                        new FormControl(''),
+                    ] );
+                    let result = fn( formArray );
                     expect( result ).not.toBeNull();
                     expect( result.maxlength ).toBeDefined();
                 });
@@ -535,6 +566,11 @@ describe( 'ValidationMethods', () => {
                     formControl.setValue( '1234567' );
                     expect( fn( formControl ) ).toBeNull();
                 });
+
+                it( 'when FormArray has number of controls within argument range', () => {
+                    let formArray: FormArray = new FormArray( [ new FormControl(''), new FormControl(''), new FormControl('') ] );
+                    expect( fn( formArray ) ).toBeNull();
+                });
             });
 
             describe( 'returns error metadata object', () => {
@@ -552,6 +588,13 @@ describe( 'ValidationMethods', () => {
                 it( 'when FormControl has string with length > max length argument', () => {
                     formControl.setValue( '12345678' );
                     let result = fn( formControl );
+                    expect( result ).not.toBeNull();
+                    expect( result.withinlength ).toBeDefined();
+                });
+
+                it( 'when FormArray has number of controls outside argument range', () => {
+                    let formArray: FormArray = new FormArray( [ new FormControl(''), new FormControl('') ] );
+                    let result = fn( formArray );
                     expect( result ).not.toBeNull();
                     expect( result.withinlength ).toBeDefined();
                 });
