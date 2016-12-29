@@ -5,8 +5,8 @@
         <form class="form-horizontal well well-sm" [formGroup]="profileForm">
 
             <div class="form-group">
-                <label for="firstName" class="col-md-2 control-label">firstName:</label>
-                <div class="col-md-6">
+                <label for="firstName" class="col-md-3 control-label">firstName:</label>
+                <div class="col-md-4">
                     <input id="firstName" type="text" class="form-control" formControlName="firstName">
                     <div *ngIf="pageReady && showErrors(profileForm.controls.firstName)" class="alert alert-danger">
                         <ul>
@@ -16,14 +16,14 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-5">
                     Field is required. Must be less than 26 characters.
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="lastName" class="col-md-2 control-label">lastName:</label>
-                <div class="col-md-6">
+                <label for="lastName" class="col-md-3 control-label">lastName:</label>
+                <div class="col-md-4">
                     <input id="lastName" type="text" class="form-control" formControlName="lastName">
                     <div *ngIf="pageReady && showErrors(profileForm.controls.lastName)" class="alert alert-danger">
                         <ul>
@@ -33,14 +33,14 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-5">
                     Field is required.  Must be less than 26 characters.
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="username" class="col-md-2 control-label">Username:</label>
-                <div class="col-md-6">
+                <label for="username" class="col-md-3 control-label">Username:</label>
+                <div class="col-md-4">
                     <input id="username" type="text" class="form-control" formControlName="username">
                     <div *ngIf="pageReady && showErrors(profileForm.controls.username)" class="alert alert-danger">
                         <ul>
@@ -50,14 +50,51 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-5">
                     Field is required.  Must be between 3 and 30 characters long.
                 </div>
             </div>
 
+            <div formGroupName="passwordGroup">
+                <div class="form-group">
+                    <label for="password" class="col-md-3 control-label">Password:</label>
+                    <div class="col-md-4">
+                        <input id="password" type="text" class="form-control" formControlName="password">
+                        <div *ngIf="pageReady && showErrors( profileForm.controls.passwordGroup.controls.password )" class="alert alert-danger">
+                            <ul>
+                                <li *ngFor="let error of getControlErrors( profileForm.controls.passwordGroup.controls.password )">
+                                    {{error}}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        Field is required.  Must be at least 6 characters long.
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="col-md-3 control-label">Confirm Password:</label>
+                    <div class="col-md-4">
+                        <input id="confirmPassword" type="text" class="form-control" formControlName="confirmPassword">
+                        <!-- Ensures error only displayed under appropriate conditions -->
+                        <div *ngIf="pageReady && passwordGroupModified() && profileForm.controls.passwordGroup.hasError( 'equalvalues' )" class="alert alert-danger">
+                            <ul>
+                                <li *ngFor="let error of getControlErrors( profileForm.controls.passwordGroup )">
+                                    {{error}}
+                                </li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="col-md-5">
+                        Should equal password.
+                    </div>
+                </div>
+            </div>
+
             <div class="form-group">
-                <label for="age" class="col-md-2 control-label">Age:</label>
-                <div class="col-md-6">
+                <label for="age" class="col-md-3 control-label">Age:</label>
+                <div class="col-md-4">
                     <input id="age" type="text" class="form-control" formControlName="age">
                     <div *ngIf="pageReady && showErrors(profileForm.controls.age)" class="alert alert-danger">
                         <ul>
@@ -67,14 +104,14 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-5">
                     Field is optional.  Must be an integer.
                 </div>
             </div>
 
             <div class="form-group">
-                <label for="gender" class="col-md-2 control-label">Gender:</label>
-                <div class="col-md-6">
+                <label for="gender" class="col-md-3 control-label">Gender:</label>
+                <div class="col-md-4">
                     <input id="gender" type="text" class="form-control" formControlName="gender">
                     <div *ngIf="pageReady && showErrors(profileForm.controls.gender)" class="alert alert-danger">
                         <ul>
@@ -84,13 +121,13 @@
                         </ul>
                     </div>
                 </div>
-                <div class="col-md-4">
+                <div class="col-md-5">
                     Field is optional.  Must be value of either "M" or "F".
                 </div>
             </div>
 
            <div class="row">
-               <div class="col-md-6 col-md-offset-2">
+               <div class="col-md-6 col-md-offset-3">
                    <button type="button" class="btn btn-primary" [disabled]="!profileForm.valid" (click)="submitForm()">Submit</button>
                    <button type="button" class="btn btn-default" (click)="resetForm()">Reset</button>
                </div>

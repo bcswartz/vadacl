@@ -35,6 +35,10 @@ interface TotalsSettings {
     message ?: string
 }
 
+interface EqualValuesSettings {
+    message ?: string
+}
+
 /*
  Interface for defining any and all known validation methods for a given domain object property
  */
@@ -45,7 +49,8 @@ interface PropertyValidations {
     maxLength ?: MaxLengthSettings,
     pattern ?: PatternSettings,
     withinLength ?: WithinLengthSettings,
-    totals ?: TotalsSettings
+    totals ?: TotalsSettings,
+    equalValues ?: EqualValuesSettings
 }
 
 /*

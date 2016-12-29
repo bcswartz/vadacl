@@ -7,7 +7,6 @@ let Messages = {
     maxlength: 'The value is too long',
     pattern: 'The value does not match the pattern',
     withinlength: 'The value does not meet the size requirements',
-    totals: 'The total value does not meet the required total',
 
     /* LOCALE-BASED DOMAIN CLASS MESSAGES */
     Company: {

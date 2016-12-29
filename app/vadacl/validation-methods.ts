@@ -125,6 +125,38 @@ export class ValidationMethods {
         }
     }
 
+    static equalValues( message ?: string, className ?: string, propertyName ?: string ) {
+        let msg = message || ValidationMethods.getLocaleMessage( 'equalvalues', className, propertyName );
+        return function( controlCollection: FormGroup | FormArray ) {
+            let areEqual: boolean = true;
+            let firstValue: any;
+            if( controlCollection.controls instanceof Array ) {
+                for( let c in controlCollection.controls ) {
+                    if( firstValue === undefined ) {
+                        firstValue = controlCollection.controls[ c ].value;
+                    } else {
+                        if( firstValue !== controlCollection.controls[ c ].value ) {
+                            areEqual = false;
+                        }
+                    }
+                }
+            } else {
+                let controlNames = Object.keys( controlCollection.controls );
+                for( let cn in controlNames ) {
+                    let currentControl = controlCollection.controls[ controlNames[ cn ] ];
+                    if( firstValue === undefined ) {
+                        firstValue = currentControl.value;
+                    } else {
+                        if( firstValue !== currentControl.value ) {
+                            areEqual = false;
+                        }
+                    }
+                }
+            }
+            return ( firstValue && areEqual === true ) ? null : { 'equalvalues': { 'message': msg } };
+        }
+    }
+
 }
 
 

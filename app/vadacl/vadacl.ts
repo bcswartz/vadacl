@@ -1,5 +1,5 @@
 
-import { AbstractControl, FormGroup, FormArray, ValidatorFn } from '@angular/forms';
+import { AbstractControl, ValidatorFn } from '@angular/forms';
 import { ValidationMethods } from './validation-methods';
 import { PropertyValidations } from './interfaces';
 

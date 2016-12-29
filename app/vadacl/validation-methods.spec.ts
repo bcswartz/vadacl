@@ -13,6 +13,7 @@ describe( 'ValidationMethods', () => {
     Messages.pattern = 'default pattern message';
     Messages.withinlength = 'default withinLength message';
     Messages.totals = 'default totals message';
+    Messages.equalvalues = 'default equalValues message';
 
     //Set locale message values for a specific class
     Messages[ 'Widget' ] = {
@@ -23,7 +24,9 @@ describe( 'ValidationMethods', () => {
             maxlength: 'widget maxlength message',
             pattern: 'widget pattern message',
             withinlength: 'widget withinlength message',
-            totals: 'widget totals message'
+            totals: 'widget totals message',
+            equalvalues: 'widget equalvalues message'
+
         }
     };
 
@@ -793,7 +796,7 @@ describe( 'ValidationMethods', () => {
                     expect( result.totals ).toBeDefined();
                 });
 
-                it( 'when FormArray control values do not add up to required total', () => {
+                it( 'when FormGroup control values do not add up to required total', () => {
                     percentageGroup.controls[ 'working' ].setValue( 10 );
                     percentageGroup.controls[ 'playing' ].setValue( 10 );
                     percentageGroup.controls[ 'sleeping' ].setValue( 10 );
@@ -857,6 +860,121 @@ describe( 'ValidationMethods', () => {
                     let func = ValidationMethods.totals( 5, 'custom totals message', 'Widget', 'name' );
                     let result = func( percentageGroup );
                     expect( result[ 'totals' ].message ).toEqual( 'custom totals message' );
+                });
+            });
+        });
+    });
+
+    describe( 'equalValues:', () => {
+
+        it( 'returns a validation function', () => {
+            expect( ValidationMethods.equalValues() ).toEqual( jasmine.any( Function ) );
+        });
+
+        describe( 'validation method', () => {
+            let fn: any;
+            let passwordGroup: FormGroup;
+            let passwordArray: FormArray;
+
+            beforeEach( () => {
+                fn = ValidationMethods.equalValues();
+                passwordGroup = new FormGroup( {
+                    'password': new FormControl( null ),
+                    'confirmPassword': new FormControl( null )
+                });
+
+                passwordArray = new FormArray( [
+                    new FormControl( null ),
+                    new FormControl( null ),
+                    new FormControl( null )
+                ]);
+            });
+
+            describe( 'returns null', () => {
+                it( 'when FormGroup control values are exactly equal', () => {
+                    passwordGroup.controls[ 'password' ].setValue( 'pswdCh3ck' );
+                    passwordGroup.controls[ 'confirmPassword' ].setValue( 'pswdCh3ck' );
+                    expect( fn( passwordGroup ) ).toBeNull();
+                });
+
+                it( 'when FormArray control values are exactly equal', () => {
+                    passwordArray.controls[ 0 ].setValue( 'pswdocd' );
+                    passwordArray.controls[ 1 ].setValue( 'pswdocd' );
+                    passwordArray.controls[ 2 ].setValue( 'pswdocd' );
+                    expect( fn( passwordArray ) ).toBeNull();
+                });
+            });
+
+            describe( 'returns error metadata object', () => {
+
+                it( 'when FormGroup control values are all null', () => {
+                    let result = fn( passwordGroup );
+                    expect( result ).not.toBeNull();
+                    expect( result.equalvalues ).toBeDefined();
+                });
+
+                it( 'when FormArray control values are all null', () => {
+                    let result = fn( passwordArray );
+                    expect( result ).not.toBeNull();
+                    expect( result.equalvalues ).toBeDefined();
+                });
+
+                it( 'when FormGroup control values are all empty strings', () => {
+                    passwordGroup.controls[ 'password' ].setValue( '' );
+                    passwordGroup.controls[ 'confirmPassword' ].setValue( '' );
+                    let result = fn( passwordGroup );
+                    expect( result ).not.toBeNull();
+                    expect( result.equalvalues ).toBeDefined();
+                });
+
+                it( 'when FormArray control values are all empty strings', () => {
+                    passwordArray.controls[ 0 ].setValue( '' );
+                    passwordArray.controls[ 1 ].setValue( '' );
+                    passwordArray.controls[ 2 ].setValue( '' );
+                    let result = fn( passwordArray );
+                    expect( result ).not.toBeNull();
+                    expect( result.equalvalues ).toBeDefined();
+                });
+
+                it( 'when FormGroup control values are not exactly equal', () => {
+                    passwordGroup.controls[ 'password' ].setValue( 10 );
+                    passwordGroup.controls[ 'confirmPassword' ].setValue( '10' );
+                    let result = fn( passwordGroup );
+                    expect( result ).not.toBeNull();
+                    expect( result.equalvalues ).toBeDefined();
+                });
+
+                it( 'when FormArray control values are not exactly equal', () => {
+                    passwordArray.controls[ 0 ].setValue( 10 );
+                    passwordArray.controls[ 1 ].setValue( '10' );
+                    passwordArray.controls[ 2 ].setValue( null );
+                    let result = fn( passwordArray );
+                    expect( result ).not.toBeNull();
+                    expect( result.equalvalues ).toBeDefined();
+                });
+
+                it( 'that uses default equalvalues message when no message argument is provided', () => {
+                    let result = fn( passwordGroup );
+                    expect( result.equalvalues.message ).toBeDefined();
+                    expect( result.equalvalues.message ).toEqual( Messages.equalvalues );
+                });
+
+                it( 'that uses message from argument in error metadata', () => {
+                    let func = ValidationMethods.equalValues( 'custom equalvalues message' );
+                    let result = func( passwordGroup );
+                    expect( result[ 'equalvalues' ].message ).toEqual( 'custom equalvalues message' );
+                });
+
+                it( 'that uses locale class property message when match found', () => {
+                    let func = ValidationMethods.equalValues( null, 'Widget', 'name' );
+                    let result = func( passwordGroup );
+                    expect( result[ 'equalvalues' ].message ).toEqual( 'widget equalvalues message' );
+                });
+
+                it( 'that overrides locale class property message when custom message is provided', () => {
+                    let func = ValidationMethods.equalValues( 'custom equalvalues message', 'Widget', 'name' );
+                    let result = func( passwordGroup );
+                    expect( result[ 'equalvalues' ].message ).toEqual( 'custom equalvalues message' );
                 });
             });
         });

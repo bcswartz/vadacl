@@ -4,6 +4,7 @@ export class UserProfile implements Validatable {
     firstName: string = null;
     lastName: string = null;
     username: string = null;
+    password: string = null;
     age: number = null;
     gender: string = null;
 
@@ -32,6 +33,10 @@ export class UserProfile implements Validatable {
         username: {
             maxLength: { maxLength: 30, message: 'Your username cannot be longer than 25 characters.'},
             required: { message: 'You must have a username.' }
+        },
+        password: {
+            minLength: { minLength: 6, message: 'Your password must be at least 6 characters long.' },
+            required: { message: 'You must provide a password.' },
         },
         age: {
             pattern: { pattern: '[0-9]*', message: 'Enter your age as an integer.' }

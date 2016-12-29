@@ -33,6 +33,9 @@ export class AdminProfileComponent extends Vadacl implements OnInit {
             },
             username: {
                 minLength: { minLength: 3, message: 'The username must be at least 3 characters long.' }
+            },
+            passwordGroup: {
+                equalValues: { message: 'The password values must be the same.' }
             }
         };
 
@@ -49,6 +52,16 @@ export class AdminProfileComponent extends Vadacl implements OnInit {
                 this.userProfile.username,
                 this.applyRules( this.userProfile, 'username', componentValidations.username )
             ),
+            'passwordGroup': new FormGroup(
+                {
+                    'password': new FormControl(
+                        this.userProfile.password,
+                        this.applyRules( this.userProfile, 'password' )
+                    ),
+                    'confirmPassword': new FormControl( null )
+                },
+                this.applyCollectionRule( null, null, componentValidations.passwordGroup )
+            ),
             'age': new FormControl(
                 this.userProfile.age,
                 this.applyRules( this.userProfile, 'age' )
@@ -60,6 +73,19 @@ export class AdminProfileComponent extends Vadacl implements OnInit {
         });
 
         this.pageReady = true;
+    }
+
+    /*
+     Prevents display of password mismatch validation error until both inputs have a value and
+     the confirmPassword control has been touched.
+     */
+    passwordGroupModified() : boolean {
+        let pswdValuesSet = false;
+        let pswdControls = this.profileForm.controls[ 'passwordGroup' ][ 'controls' ];
+        if( pswdControls.password.value && pswdControls.confirmPassword.value && pswdControls.confirmPassword.touched ) {
+            pswdValuesSet = true;
+        }
+        return pswdValuesSet;
     }
 
     resetForm() {
