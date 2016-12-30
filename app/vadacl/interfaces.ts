@@ -39,6 +39,12 @@ interface EqualValuesSettings {
     message ?: string
 }
 
+interface WithinTrueCountSettings {
+    minCount : number,
+    maxCount : number,
+    message ?: string
+}
+
 /*
  Interface for defining any and all known validation methods for a given domain object property
  */
@@ -50,7 +56,8 @@ interface PropertyValidations {
     pattern ?: PatternSettings,
     withinLength ?: WithinLengthSettings,
     totals ?: TotalsSettings,
-    equalValues ?: EqualValuesSettings
+    equalValues ?: EqualValuesSettings,
+    withinTrueCount ?: WithinTrueCountSettings
 }
 
 /*

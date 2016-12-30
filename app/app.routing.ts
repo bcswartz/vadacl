@@ -6,6 +6,7 @@ import { CompanyNameComponent } from './views/company-name/company-name.componen
 import { CustomerProfileComponent } from "./views/customer-profile/customer-profile.component";
 import { AdminProfileComponent } from './views/admin-profile/admin-profile.component';
 import { CompanyComponent } from './views/company/company.component';
+import { ExcursionPackageComponent } from './views/excursion-package/excursion-package.component';
 
 const appRoutes: Routes = [
     { path: 'home', component: HomeComponent },
@@ -15,7 +16,8 @@ const appRoutes: Routes = [
     { path: 'patient', component: PatientComponent },
     { path: 'address', component: AddressComponent },
     { path: 'company', component: CompanyComponent },
-    { path: 'company-name', component: CompanyNameComponent }
+    { path: 'company-name', component: CompanyNameComponent },
+    { path: 'excursion-package', component: ExcursionPackageComponent }
 ];
 
 export const routing = RouterModule.forRoot( appRoutes );

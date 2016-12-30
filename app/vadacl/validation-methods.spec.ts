@@ -14,6 +14,7 @@ describe( 'ValidationMethods', () => {
     Messages.withinlength = 'default withinLength message';
     Messages.totals = 'default totals message';
     Messages.equalvalues = 'default equalValues message';
+    Messages.withintruecount = 'default withintruecount message';
 
     //Set locale message values for a specific class
     Messages[ 'Widget' ] = {
@@ -25,8 +26,8 @@ describe( 'ValidationMethods', () => {
             pattern: 'widget pattern message',
             withinlength: 'widget withinlength message',
             totals: 'widget totals message',
-            equalvalues: 'widget equalvalues message'
-
+            equalvalues: 'widget equalvalues message',
+            withintruecount: 'widget withintruecount message'
         }
     };
 
@@ -975,6 +976,161 @@ describe( 'ValidationMethods', () => {
                     let func = ValidationMethods.equalValues( 'custom equalvalues message', 'Widget', 'name' );
                     let result = func( passwordGroup );
                     expect( result[ 'equalvalues' ].message ).toEqual( 'custom equalvalues message' );
+                });
+            });
+        });
+    });
+
+    describe( 'withinTrueCount:', () => {
+
+        it( 'returns a validation function', () => {
+            expect( ValidationMethods.withinTrueCount( 1, 1 ) ).toEqual( jasmine.any( Function ) );
+        });
+
+        describe( 'validation method', () => {
+            let fn: any;
+            let checkboxGroup: FormGroup;
+            let checkboxArray: FormArray;
+
+            beforeEach( () => {
+                fn = ValidationMethods.withinTrueCount( 1, 3 );
+                checkboxGroup = new FormGroup( {
+                    'box0': new FormControl( false ),
+                    'box1': new FormControl( false ),
+                    'box2': new FormControl( false ),
+                    'box3': new FormControl( false )
+                });
+
+                checkboxArray = new FormArray( [
+                    new FormControl( false ),
+                    new FormControl( false ),
+                    new FormControl( false ),
+                    new FormControl( false )
+                ]);
+            });
+
+            describe( 'returns null', () => {
+                it( 'when count of true values in FormGroup controls falls in defined range', () => {
+                    checkboxGroup.controls[ 'box0' ].setValue( true );
+                    expect( fn( checkboxGroup ) ).toBeNull();
+
+                    checkboxGroup.controls[ 'box1' ].setValue( true );
+                    expect( fn( checkboxGroup ) ).toBeNull();
+
+                    checkboxGroup.controls[ 'box2' ].setValue( true );
+                    expect( fn( checkboxGroup ) ).toBeNull();
+                });
+
+                it( 'when count of true values in FormArray controls falls in defined range', () => {
+                    checkboxArray.controls[ 0 ].setValue( true );
+                    expect( fn( checkboxArray ) ).toBeNull();
+
+                    checkboxArray.controls[ 1 ].setValue( true );
+                    expect( fn( checkboxArray ) ).toBeNull();
+
+                    checkboxArray.controls[ 2 ].setValue( true );
+                    expect( fn( checkboxArray ) ).toBeNull();
+                });
+
+                it( 'when count of true values in FormGroup matches equal min/max count parameters', () =>  {
+                    let func = ValidationMethods.withinTrueCount( 1, 1 );
+                    checkboxGroup.controls[ 'box1' ].setValue( true );
+                    expect( func( checkboxGroup ) ).toBeNull();
+                });
+
+                it( 'when count of true values in FormArray matches equal min/max count parameters', () =>  {
+                    let func = ValidationMethods.withinTrueCount( 1, 1 );
+                    checkboxArray.controls[ 2 ].setValue( true );
+                    expect( func( checkboxArray ) ).toBeNull();
+                });
+
+                it( 'when count of true values in FormGroup >= min count and max count parameter is null', () =>  {
+                    let func = ValidationMethods.withinTrueCount( 1, null );
+                    checkboxGroup.controls[ 'box0' ].setValue( true );
+                    checkboxGroup.controls[ 'box1' ].setValue( true );
+                    expect( func( checkboxGroup ) ).toBeNull();
+                });
+
+                it( 'when count of true values in FormArray >= min count and max count parameter is null', () =>  {
+                    let func = ValidationMethods.withinTrueCount( 1, null );
+                    checkboxArray.controls[ 0 ].setValue( true );
+                    checkboxArray.controls[ 2 ].setValue( true );
+                    expect( func( checkboxArray ) ).toBeNull();
+                });
+
+                it( 'when min/max count parameters are null and there are no true values in FormGroup', () =>  {
+                    let func = ValidationMethods.withinTrueCount( null, null );
+                    expect( func( checkboxGroup ) ).toBeNull();
+                });
+
+                it( 'when min/max count parameters are null and there are no true values in FormArray', () =>  {
+                    let func = ValidationMethods.withinTrueCount( null, null );
+                    expect( func( checkboxArray ) ).toBeNull();
+                });
+            });
+
+            describe( 'returns error metadata object', () => {
+
+                it( 'when count of true values in FormGroup controls falls outside defined range', () => {
+                    let result = fn( checkboxGroup );
+                    expect( result ).not.toBeNull();
+                    expect( result.withintruecount ).toBeDefined();
+
+                    checkboxGroup.controls[ 'box0' ].setValue( true );
+                    checkboxGroup.controls[ 'box1' ].setValue( true );
+                    checkboxGroup.controls[ 'box2' ].setValue( true );
+                    checkboxGroup.controls[ 'box3' ].setValue( true );
+                    expect( result ).not.toBeNull();
+                    expect( result.withintruecount ).toBeDefined();
+                });
+
+                it( 'when count of true values in FormArray controls falls outside defined range', () => {
+                    let result = fn( checkboxArray );
+                    expect( result ).not.toBeNull();
+                    expect( result.withintruecount ).toBeDefined();
+
+                    checkboxArray.controls[ 0 ].setValue( true );
+                    checkboxArray.controls[ 1 ].setValue( true );
+                    checkboxArray.controls[ 2 ].setValue( true );
+                    checkboxArray.controls[ 3 ].setValue( true );
+                    expect( result ).not.toBeNull();
+                    expect( result.withintruecount ).toBeDefined();
+                });
+
+                it( 'when control values only have string value of true', () => {
+                    checkboxGroup.controls[ 'box0' ].setValue( 'true' );
+                    let groupResult = fn( checkboxGroup );
+                    expect( groupResult ).not.toBeNull();
+                    expect( groupResult.withintruecount ).toBeDefined();
+
+                    checkboxArray.controls[ 0 ].setValue( 'true' );
+                    let arrayResult = fn( checkboxArray );
+                    expect( arrayResult ).not.toBeNull();
+                    expect( arrayResult.withintruecount ).toBeDefined();
+                });
+
+                it( 'that uses default withintruecount message when no message argument is provided', () => {
+                    let result = fn( checkboxGroup );
+                    expect( result.withintruecount.message ).toBeDefined();
+                    expect( result.withintruecount.message ).toEqual( Messages.withintruecount );
+                });
+
+                it( 'that uses message from argument in error metadata', () => {
+                    let func = ValidationMethods.withinTrueCount( 1, 1, 'custom withintruecount message' );
+                    let result = func( checkboxArray );
+                    expect( result[ 'withintruecount' ].message ).toEqual( 'custom withintruecount message' );
+                });
+
+                it( 'that uses locale class property message when match found', () => {
+                    let func = ValidationMethods.withinTrueCount( 1, 1, null, 'Widget', 'name' );
+                    let result = func( checkboxArray );
+                    expect( result[ 'withintruecount' ].message ).toEqual( 'widget withintruecount message' );
+                });
+
+                it( 'that overrides locale class property message when custom message is provided', () => {
+                    let func = ValidationMethods.withinTrueCount( 1, 1, 'custom withintruecount message', 'Widget', 'name' );
+                    let result = func( checkboxGroup );
+                    expect( result[ 'withintruecount' ].message ).toEqual( 'custom withintruecount message' );
                 });
             });
         });

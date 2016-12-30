@@ -82,6 +82,10 @@ export class ValidationMethods {
         }
     }
 
+    /*
+     Validates that the length of the value of the AbstractControl falls within a certain range.  Can be used to validate
+     the length of a string or the number of form controls in a FormGroup or FormArray
+     */
     static withinLength( minLength: number, maxLength: number, message ?: string, className ?: string, propertyName ?: string  ) {
         let msg = message || ValidationMethods.getLocaleMessage( 'withinlength', className, propertyName );
         return function ( control: AbstractControl ) {
@@ -96,6 +100,9 @@ export class ValidationMethods {
         }
     }
 
+    /*
+     Validates that the sum of the numeric values of the FormGroup or FormArray controls equals a certain amount.
+     */
     static totals( total: number, message ?: string, className ?: string, propertyName ?: string ) {
         let msg = message || ValidationMethods.getLocaleMessage( 'totals', className, propertyName );
         return function ( controlCollection: FormGroup | FormArray ) {
@@ -125,6 +132,9 @@ export class ValidationMethods {
         }
     }
 
+    /*
+     Validates that all of the values of the FormControls within a FormGroup or FormArray are exactly equal.
+     */
     static equalValues( message ?: string, className ?: string, propertyName ?: string ) {
         let msg = message || ValidationMethods.getLocaleMessage( 'equalvalues', className, propertyName );
         return function( controlCollection: FormGroup | FormArray ) {
@@ -154,6 +164,42 @@ export class ValidationMethods {
                 }
             }
             return ( firstValue && areEqual === true ) ? null : { 'equalvalues': { 'message': msg } };
+        }
+    }
+
+    /*
+     Validates that the number of FormControls within a FormGroup or FormArray with a value of Boolean true falls within
+     a given range.  Designed primarily to validate how many checkboxes are checked.
+     */
+    static withinTrueCount( minCount: number, maxCount: number, message ?: string, className ?: string, propertyName ?: string ) {
+        let msg = message || ValidationMethods.getLocaleMessage( 'withintruecount', className, propertyName );
+        return function( controlCollection: FormGroup | FormArray ) {
+            let trueCount: number = 0;
+            let minimumTrue: number = minCount ? minCount : 0;
+            let withinCount: boolean = false;
+            if( controlCollection.controls instanceof Array ) {
+                for( let c in controlCollection.controls ) {
+                    if( controlCollection.controls[ c ].value === true ) {
+                        trueCount++;
+                    }
+                }
+            } else {
+                let controlNames = Object.keys( controlCollection.controls );
+                for( let cn in controlNames ) {
+                    let currentControl = controlCollection.controls[ controlNames[ cn ] ];
+                    if( currentControl.value  === true ) {
+                        trueCount++;
+                    }
+                }
+            }
+
+            if( maxCount ) {
+                withinCount = ( trueCount >= minimumTrue && trueCount <= maxCount ) ? true : false;
+            } else {
+                withinCount = trueCount >= minimumTrue ? true : false;
+            }
+
+            return withinCount ? null : { 'withintruecount': { 'minTrue': minimumTrue, 'maxTrue': maxCount, 'trueCount': trueCount, 'message': msg } };
         }
     }
 

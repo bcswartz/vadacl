@@ -1,0 +1,54 @@
+<h3>Cruise Excursion Package</h3>
+
+<div class="row">
+    <div class="col-md-8">
+        <form class="form-horizontal well well-sm" [formGroup]="packageForm">
+            <div class="form-group">
+                <label for="package" class="col-md-2 control-label">Package:</label>
+                <div class="col-md-6">
+                    <select id="package" class="form-control" formControlName="package" (change)="updatePackage()">
+                        <option *ngFor="let p of packageArray" [selected]="p.id == selectedPackage" [value]="p.id">{{p.name}} - {{p.count}} excursions ({{p.price}})</option>
+                    </select>
+                </div>
+                <div class="col-md-4">
+                    Each excursion package allows you to take a certain number of excursions.  Choose a package and then
+                    choose your specific excursions.
+                </div>
+            </div>
+
+            <div class="form-group">
+                <label class="col-md-2 control-label">Excursions:<br />(Select {{selectedPackage.count}})</label>
+                <div class="col-md-10">
+                    <ul class="excursionList" formArrayName="excursions"> <!-- Must set the formArrayName -->
+                        <li *ngFor="let ex of packageForm.controls.excursions.controls; let i = index">
+                            <input type="checkbox" formControlName="{{i}}" > <strong>{{excursionArray[i].title}}:</strong> {{excursionArray[i].label}}
+                        </li>
+                    </ul>
+                    <div *ngIf="pageReady && showErrors( packageForm.controls.excursions )" class="alert alert-danger">
+                        <ul>
+                            <li *ngFor="let error of getControlErrors( packageForm.controls.excursions )">
+                                {{error}}
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-md-6 col-md-offset-2">
+                    <button type="button" class="btn btn-primary" [disabled]="!packageForm.valid" (click)="submitForm()">Submit</button>
+                    <button type="button" class="btn btn-default" (click)="resetForm()">Reset</button>
+                </div>
+                <div class="col-md-2 col-md-offset-1">
+                    <span class="label label-success" *ngIf="formSubmitted">Data submitted!</span>
+                </div>
+            </div>
+
+        </form>
+    </div>
+</div>
+<div class="row">
+    <div class="col-md-8">
+        <a class="btn btn-primary" [routerLink]="['/home']">Return to Main Page</a>
+    </div>
+</div>

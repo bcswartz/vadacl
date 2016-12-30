@@ -11,8 +11,10 @@ import { CompanyNameComponent } from './views/company-name/company-name.componen
 import { CustomerProfileComponent } from './views/customer-profile/customer-profile.component';
 import { AdminProfileComponent } from './views/admin-profile/admin-profile.component';
 import { CompanyComponent } from './views/company/company.component';
+import { ExcursionPackageComponent } from './views/excursion-package/excursion-package.component';
 
 import { Vadacl as VadaclService } from './vadacl/vadacl';
+
 
 
 
@@ -30,7 +32,8 @@ import { Vadacl as VadaclService } from './vadacl/vadacl';
         PatientComponent,
         AddressComponent,
         CompanyNameComponent,
-        CompanyComponent
+        CompanyComponent,
+        ExcursionPackageComponent
     ],
     providers: [
         VadaclService

@@ -8,7 +8,8 @@ let Messages = {
     pattern: 'The value does not match the pattern',
     withinlength: 'The value does not meet the size requirements',
     totals: 'The total value does not meet the required total',
-    equalvalues: 'The values are not equal'
+    equalvalues: 'The values are not equal',
+    withintruecount: 'The number of true values does not meet the requirement'
 };
 
 export { Messages };
