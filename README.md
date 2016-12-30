@@ -200,6 +200,9 @@ new validation settings provided in the 3rd argument.  It then uses that combina
 component-level validation settings to produce an array of validator methods that can be returned as the 2nd argument to 
 the FormControl constructor.
 
+(The Vadacl class also contains a similar method, the applyCollectionRule() method, that 
+performs the same function for applying a single validation method to a FormGroup or FormArray collection of FormControls)
+
 The AdminProfileComponent used to let admin users edit their user profile would be constructed in a similar way, but 
 would apply a different set of component-level validation settings:
 
@@ -325,11 +328,40 @@ component template, eliminating the need to conditionally display different DOM 
 
 [Click to view admin profile form screenshot](docs/adminProfileErrors.png)
 
-### Other Features
+## Validation Methods
 
-* In addition to wrapping and reusing the validation methods currently provided in Angular 2 (required, minLength, 
-maxLength, pattern), vadacl also includes a withinLength validation for validating that a string length falls within a 
-certain range. Creating additional validation methods is just a matter of following the examples of the current methods.
+The ValidationMethods class of vadacl includes validation methods that either mimic or wrap the Validator methods 
+provided by Angular as of version 2.4.1:
+
+* required
+* requiredTrue
+* minLength
+* maxLength
+* pattern
+
+It also includes the following additional validation methods:
+
+* "withinLength": Validates that the length of the value of the AbstractControl falls within a certain range.  Like
+the minLength and maxLength methods, it can be used to validate the length of a string or the number of form controls 
+in a FormGroup or FormArray.
+
+* "totals": Validates that the sum of the numeric values of the FormGroup or FormArray controls equals a certain amount.
+
+* "equalValues": Validates that all of the values of the FormControls within a FormGroup or FormArray are exactly equal. 
+Useful for performing password confirmation.
+
+* "withinTrueCount": Validates that the number of FormControls within a FormGroup or FormArray with a value of Boolean 
+true falls within a given range.  Designed primarily to validate how many checkboxes are checked.
+
+You can also add your own validation methods in three simple steps:
+
+1. In interfaces.ts, create an interface for the settings for your validation method and add it to the PropertyValidations
+interface.
+2. Create a default message for your validation method in any/all of your Message object files.
+3. Add the validation method to the ValidationMethods class.
+
+
+### Other Features
 
 * If you don't want to write your components to extend the Vadacl class, you can declare the Vadacl class as a provider
 in the appropriate Angular module(s) and inject it into your components like any other service.
@@ -368,7 +400,9 @@ need to be altered at a component level.
 
 **Using vadacl in your project**
 
-To use vadacl, simply download or checkout this repo, then copy the app/vadacl folder into your own project.
+To use vadacl, simply download or checkout this repo, then copy the app/vadacl folder into your own project.  If you're
+unsure about how to apply certain validations, look at the code in the demos (either here in the repo or in the downloaded
+code)for guidance.
 
 **Trying out vadacl**
 
@@ -376,7 +410,7 @@ This repo contains an Angular 2 application (currently Angular 2.1.1) with sever
 out vadacl, download or checkout the repo, open a command prompt in the main project folder, run "npm install" to get 
 the needed Node modules to run Angular, and run the application using "npm start."
 
-Note that the demos display the validation errors based on the default configuration, meaning that the errors are not
+Note that the most of the demos display the validation errors based on the default configuration, meaning that the errors are not
 displayed until the invalid field is marked as both dirty and touched (had and then lost focus).
 
 **Testing vadacl**
@@ -386,6 +420,16 @@ and configuration files for running the tests via Karma. To execute the tests, o
 the main project folder, run "npm install" to get the needed Node modules, and then run "npm test".
 
 ## Release Notes
+
+### 0.2.0
+
+* Added applyCollectionRule method to Vadacl class to apply a single validation method to a FormArray or FormGroup.
+* Updated pattern validation method to accept both string and RexExp pattern arguments (to match current Angular pattern Validator).
+* Added requiredTrue validation method that mimics recently-added Angular requiredTrue Validator.
+* Made minor logic enhancement to applyRules Vadacl method.
+* Added three validation methods specifically for FormGroup and FormArray validation:  totals, equalValues, and withinTrueCount.
+* Added and updated demos to demonstrate new validation methods.
+* Updated demo codebase to Angular 2.4.1.
 
 ### 0.1.0
 
@@ -404,4 +448,5 @@ the main project folder, run "npm install" to get the needed Node modules, and t
 
 Currently the roadmap for improving vadacl includes the following items:
 
-* The addition of more validation methods.
+* Possibly refactoring the classes and objects to make it easier for developers to upgrade their instance of vadacl 
+without losing any of their custom validation methods.

@@ -84,7 +84,7 @@ export class ValidationMethods {
 
     /*
      Validates that the length of the value of the AbstractControl falls within a certain range.  Can be used to validate
-     the length of a string or the number of form controls in a FormGroup or FormArray
+     the length of a string or the number of form controls in a FormGroup or FormArray.
      */
     static withinLength( minLength: number, maxLength: number, message ?: string, className ?: string, propertyName ?: string  ) {
         let msg = message || ValidationMethods.getLocaleMessage( 'withinlength', className, propertyName );
@@ -101,7 +101,8 @@ export class ValidationMethods {
     }
 
     /*
-     Validates that the sum of the numeric values of the FormGroup or FormArray controls equals a certain amount.
+     Validates that the sum of the numeric values of the FormGroup or FormArray controls equals a certain amount.  Should
+     be applied with the applyCollectionRule() method of the Vadacl class.
      */
     static totals( total: number, message ?: string, className ?: string, propertyName ?: string ) {
         let msg = message || ValidationMethods.getLocaleMessage( 'totals', className, propertyName );
@@ -133,7 +134,8 @@ export class ValidationMethods {
     }
 
     /*
-     Validates that all of the values of the FormControls within a FormGroup or FormArray are exactly equal.
+     Validates that all of the values of the FormControls within a FormGroup or FormArray are exactly equal.  Should
+     be applied with the applyCollectionRule() method of the Vadacl class.
      */
     static equalValues( message ?: string, className ?: string, propertyName ?: string ) {
         let msg = message || ValidationMethods.getLocaleMessage( 'equalvalues', className, propertyName );
@@ -169,7 +171,8 @@ export class ValidationMethods {
 
     /*
      Validates that the number of FormControls within a FormGroup or FormArray with a value of Boolean true falls within
-     a given range.  Designed primarily to validate how many checkboxes are checked.
+     a given range.  Designed primarily to validate how many checkboxes are checked.  Should be applied with the
+     applyCollectionRule() method of the Vadacl class.
      */
     static withinTrueCount( minCount: number, maxCount: number, message ?: string, className ?: string, propertyName ?: string ) {
         let msg = message || ValidationMethods.getLocaleMessage( 'withintruecount', className, propertyName );
