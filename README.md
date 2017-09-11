@@ -1,4 +1,18 @@
-# vadacl
+# This Repo Is Now Obsolete
+ 
+A new version of vadacl, updated for Angular 4.x, has been published as an npm package:
+
+[https://github.com/bcswartz/vadacl-npm](https://github.com/bcswartz/vadacl-npm)
+
+An Angular CLI-powered Angular 4.x application that demonstrates the use of vadacl (an app based on the one in this
+repo) is also available in a separate repo:
+
+[https://github.com/bcswartz/vadacl-demo](https://github.com/bcswartz/vadacl-demo)
+
+This repo will remain up for the time being.
+
+
+## vadacl
 vadacl ("validation at domain and component levels") is a small TypeScript library for Angular 2 that enhances the 
 reactive form validation features provided in Angular 2.  It provides a means by which developers can set domain/database-based 
 validation rules on data objects but then augment or override those validations as needed within different components.
